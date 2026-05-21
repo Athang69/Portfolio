@@ -100,11 +100,11 @@ export function OpenSourceSection() {
             {/* Stats */}
             <div className="flex gap-8">
               <div>
-                <span className="font-display text-4xl font-bold gradient-text">6+</span>
+                <span className="font-display text-4xl font-bold gradient-text">12+</span>
                 <p className="font-sans text-[13px] text-[#52526E] mt-1">Merged PRs</p>
               </div>
               <div>
-                <span className="font-display text-4xl font-bold gradient-text">2</span>
+                <span className="font-display text-4xl font-bold gradient-text">3</span>
                 <p className="font-sans text-[13px] text-[#52526E] mt-1">Projects Contributed</p>
               </div>
             </div>

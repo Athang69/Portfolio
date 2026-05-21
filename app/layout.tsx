@@ -34,7 +34,7 @@ const syne = Syne({
 })
 
 export const metadata: Metadata = {
-  title: 'Athang Kali — Full Stack Developer & Open Source Contributor',
+  title: 'Athang Kali - Full Stack Developer & Open Source Contributor',
   description:
     'Third-year ECE student at SGGS Nanded. Full-stack developer (MERN), Kubernetes open-source contributor, LeetCode Top 14% (1650+, 400+ problems). CGPA 9.16.',
   keywords: [

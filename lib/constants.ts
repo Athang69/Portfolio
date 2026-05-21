@@ -41,7 +41,7 @@ export const TICKER_ITEMS = [
   '400+ Problems Solved',
   'MERN Stack Developer',
   'Kubernetes Contributor',
-  'Open Source · 6+ Merged PRs',
+  'Open Source · 12+ Merged PRs',
   'React.js · Node.js · TypeScript',
   'Docker · Prometheus · Grafana',
   'SGGS Nanded · Class of 2027',
@@ -128,10 +128,16 @@ export const OPEN_SOURCE = [
     description:
       'Headlamp is a user-friendly Kubernetes UI. I contributed across multiple areas including error handling, test coverage, and API bug fixes.',
     prs: [
-      { number: '#5149', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5149', tooltip: 'Helm repo error handling and unit tests' },
-      { number: '#5124', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5124', tooltip: 'Unit test coverage improvement' },
-      { number: '#5085', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5085', tooltip: 'Unit test coverage improvement' },
-      { number: '#5060', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5060', tooltip: 'CronJob API fix — spec.suspend field' },
+      { number: '#5683', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5683', tooltip: 'auth: Bound FuzzSanitizeClusterName input to prevent CI timeout' },
+      { number: '#5172', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5172', tooltip: 'k8cache: Add tests for uncovered branches' },
+      { number: '#5152', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5152', tooltip: 'persist prettify log preference to localStorage' },
+      { number: '#5149', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5149', tooltip: 'helm repository error handling and regression test coverage' },
+      { number: '#5139', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5139', tooltip: 'increase pkg/config test coverage' },
+      { number: '#5124', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5124', tooltip: 'add unit tests for handler.go' },
+      { number: '#5105', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5105', tooltip: 'add backend helm auth token and frontend RouteSwitcher key uniqueness tests' },
+      { number: '#5096', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5096', tooltip: 'fix: helm release auth token and route key collision for app catalog' },
+      { number: '#5085', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5085', tooltip: 'frontend: cronjob: Handle undefined spec.suspend in List and Details' },
+      { number: '#5060', url: 'https://github.com/kubernetes-sigs/headlamp/pull/5060', tooltip: 'docs: fix typos, stale links, and outdated dependency versions' },
     ],
     summary: 'Helm repo error handling · Unit test coverage · CronJob spec.suspend API fix',
   },
@@ -141,7 +147,8 @@ export const OPEN_SOURCE = [
     description:
       'KubeArmor is a runtime Kubernetes security engine. I fixed a critical API client bug involving incorrect function casting and improper timeout handling.',
     prs: [
-      { number: '#2513', url: 'https://github.com/kubearmor/KubeArmor/pull/2513', tooltip: 'API client bug fix — function casting + timeout' },
+      { number: '#2513', url: 'https://github.com/kubearmor/KubeArmor/pull/2513', tooltip: 'docs(getting-started): fix typos in default_posture and alert_throttling' },
+      { number: '#2591', url: 'https://github.com/kubearmor/KubeArmor/pull/2591', tooltip: 'fix(build): update Go dependencies to resolve known security vulnerabilities' },
     ],
     summary: 'Documentation improvements · API client bug fix (function casting, timeout)',
   },
@@ -176,5 +183,5 @@ export const STATS = [
   { icon: 'GraduationCap', number: '9.16', label: 'CGPA out of 10' },
   { icon: 'Code', number: '400+', label: 'LeetCode problems' },
   { icon: 'TrendUp', number: '1650+', label: 'LeetCode rating' },
-  { icon: 'GitMerge', number: '6+', label: 'OSS PRs merged' },
+  { icon: 'GitMerge', number: '12+', label: 'OSS PRs merged' },
 ]
