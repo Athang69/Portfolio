@@ -14,9 +14,9 @@ function LeetCodeIcon({ className }: { className?: string }) {
 
 export function HighlightsSection() {
   return (
-    <section className="py-24 md:py-40 px-6 bg-surface">
+    <section className="py-24 md:py-40 px-6">
       <div className="max-w-[1200px] mx-auto">
-        <SectionHeader label="06 / Highlights" title="By The Numbers" className="mb-16" />
+        <SectionHeader label="07 / Highlights" title="By The Numbers" className="mb-16" />
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Competitive Programming Card */}
@@ -25,7 +25,7 @@ export function HighlightsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-20%' }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="relative border border-white/8 rounded-[20px] p-10 overflow-hidden"
+            className="relative bg-surface border border-white/8 rounded-[20px] p-10 overflow-hidden"
             style={{
               background: 'radial-gradient(ellipse at center, rgba(124, 92, 252, 0.06) 0%, transparent 70%)',
             }}
@@ -42,7 +42,7 @@ export function HighlightsSection() {
             <div className="h-px bg-white/5 my-6" />
 
             <div className="mb-2">
-              <span className="font-sans text-lg font-semibold text-[#F2F2FF]">400+ Problems</span>
+              <span className="font-sans text-lg font-semibold text-[#F2F2FF]">450+ Problems</span>
               <span className="font-mono text-[13px] text-[#9898B8] ml-3">Top 14% Globally</span>
             </div>
             <p className="font-sans text-[13px] text-[#52526E]">
@@ -56,7 +56,7 @@ export function HighlightsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-20%' }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative border border-white/8 rounded-[20px] p-10 overflow-hidden"
+            className="relative bg-surface border border-white/8 rounded-[20px] p-10 overflow-hidden"
             style={{
               background: 'radial-gradient(ellipse at center, rgba(0, 212, 255, 0.04) 0%, transparent 70%)',
             }}
@@ -64,7 +64,7 @@ export function HighlightsSection() {
             <GraduationCap size={32} className="text-cyan-400 mb-6" />
             
             <div className="gradient-text font-display text-[72px] font-extrabold leading-none">
-              9.16
+              9.21
             </div>
             <p className="font-sans text-[14px] text-[#52526E] uppercase tracking-[0.1em] mt-2">
               CGPA / 10

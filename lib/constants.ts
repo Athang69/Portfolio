@@ -4,7 +4,7 @@ export const PERSONAL_INFO = {
   institution: 'Shri Guru Gobind Singhji Institute of Engineering and Technology, Nanded',
   shortInstitution: 'SGGS Nanded',
   year: 'Third Year (2023–2027)',
-  cgpa: '9.16',
+  cgpa: '9.21',
   email: 'athangkali21@gmail.com',
   phone: '+91 9309588914',
   tagline: 'Precise. Ambitious. Builder.',
@@ -31,14 +31,15 @@ export const NAV_LINKS = [
   { label: 'Projects', href: '#projects' },
   { label: 'Open Source', href: '#opensource' },
   { label: 'Experience', href: '#experience' },
+  { label: 'Publications', href: '#publications' },
   { label: 'Contact', href: '#contact' },
 ]
 
 export const TICKER_ITEMS = [
-  'CGPA 9.16 / 10',
+  'CGPA 9.21 / 10',
   'LeetCode Top 14%',
   '1650+ Rating',
-  '400+ Problems Solved',
+  '450+ Problems Solved',
   'MERN Stack Developer',
   'Kubernetes Contributor',
   'Open Source · 12+ Merged PRs',
@@ -49,7 +50,8 @@ export const TICKER_ITEMS = [
 ]
 
 export const SKILLS = {
-  Languages: ['C++', 'JavaScript', 'TypeScript', 'Python', 'SQL', 'Shell / Bash', 'YAML'],
+  Languages: ['C++', 'Golang', 'JavaScript', 'TypeScript', 'Python', 'SQL', 'Shell / Bash', 'YAML'],
+  'Cloud Native/Security': ['Kubernetes', 'eBPF', 'SLSA', 'OpenSSF Scorecard', 'GitHub Actions'],
   Frontend: ['React.js', 'Next.js', 'Tailwind CSS', 'WebSocket', 'HTML5', 'CSS3'],
   Backend: ['Node.js', 'Express.js', 'REST APIs', 'JWT Auth', 'Bcrypt', 'Input Validation'],
   Database: ['MongoDB', 'MySQL', 'PostgreSQL', 'Prisma ORM', 'Firebase', 'Mongoose'],
@@ -62,6 +64,7 @@ export const SKILLS = {
 export const SKILL_CATEGORIES = [
   { key: 'All', label: 'All' },
   { key: 'Languages', label: 'Languages' },
+  { key: 'Cloud Native/Security', label: 'Cloud Native/Security' },
   { key: 'Frontend', label: 'Frontend' },
   { key: 'Backend', label: 'Backend' },
   { key: 'Database', label: 'Database' },
@@ -72,8 +75,40 @@ export const SKILL_CATEGORIES = [
 export const PROJECTS = [
   {
     number: '01',
-    title: 'Expense Tracker System',
+    title: 'File Encrypter / Decrypter',
     featured: true,
+    description:
+      'Built a C++17 CLI utility for recursive directory encryption using a producer-consumer task queue with POSIX fork() for parallel file processing; dual-binary architecture separates single-file and batch workflows for composable scripting.',
+    highlights: [
+      'C++17 CLI tool with recursive directory encryption and producer-consumer task queue',
+      'Parallel file processing using POSIX fork() and a dual-binary architecture for single-file and batch workflows',
+      'Flexible key derivation supporting hex, decimal, and UTF-8 key material',
+      'Applied RAII with smart pointers (`unique_ptr`) and move semantics to safely transfer file stream ownership across IO, Task, and ProcessManagement layers',
+    ],
+    stack: ['C++17', 'POSIX', 'CLI', 'Parallel Processing', 'Producer-Consumer'],
+    github: 'https://github.com/Athang69/file_encrypter_decrypter',
+    live: null,
+  },
+  {
+    number: '02',
+    title: 'URL Shortener API',
+    featured: false,
+    description:
+      'Built a containerized REST API in Go (Fiber + Redis) with custom alias support, domain validation, and UUID-based short-code generation; achieved sub-10ms redirect latency via Redis O(1) key lookups with TTL-based expiry.',
+    highlights: [
+      'Containerized Go REST API (Fiber) with Redis-backed storage and TTL-based expiry',
+      'Custom alias support and domain validation with UUID-based short-code generation',
+      'Per-IP rate limiting using a dedicated Redis database logically isolated from link storage',
+      'Full stack containerized with Docker Compose for reproducible deployment',
+    ],
+    stack: ['Go', 'Fiber', 'Redis', 'Docker', 'Docker Compose'],
+    github: 'https://github.com/Athang69/shorten-url-fiber-redis',
+    live: null,
+  },
+  {
+    number: '03',
+    title: 'Expense Tracker System',
+    featured: false,
     description:
       'A production-ready full-stack expense management application where users can track income and expenses, visualize their financial data through interactive charts, and manage their money with confidence. Built with security and performance as first-class priorities — JWT authentication, bcrypt-hashed passwords, and optimized MongoDB queries with 15% reduced latency.',
     highlights: [
@@ -86,38 +121,6 @@ export const PROJECTS = [
     stack: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Chart.js', 'JWT', 'Bcrypt', 'REST API', 'Vercel'],
     github: 'https://github.com/Athang69/Expense-Tracker',
     live: 'https://expense-tracker-lemon-eta-39.vercel.app/',
-  },
-  {
-    number: '02',
-    title: 'Second Brain',
-    featured: false,
-    description:
-      'A full-stack knowledge management platform — your personal digital brain. Capture notes, ideas, bookmarks, and references. Access them from any device with real-time synchronization powered by Firebase and MongoDB. Designed for engineers who think fast and need their tools to keep up.',
-    highlights: [
-      'Real-time cross-device sync using Firebase + MongoDB hybrid approach (40% consistency improvement)',
-      'Note retrieval latency reduced by 30% through smart caching and query optimization',
-      'Modular RESTful API architecture — easy to extend with new content types',
-      'Responsive component system boosting user workflow efficiency by 35%',
-    ],
-    stack: ['React.js', 'Node.js', 'MongoDB', 'Firebase', 'Express.js', 'REST API', 'Tailwind CSS'],
-    github: 'https://github.com/Athang69/Second-Brain',
-    live: null,
-  },
-  {
-    number: '03',
-    title: 'StationeryX Backend',
-    featured: false,
-    description:
-      'A robust backend system for a stationery inventory management platform. Handles product catalog management, order processing, and real-time stock tracking through a modular API architecture. Built to demonstrate clean separation of concerns, proper error handling, and scalable database design.',
-    highlights: [
-      'Modular Node.js API supporting product management, orders, and inventory tracking',
-      'Optimized MongoDB queries and indexing improved query performance by 25%',
-      'Comprehensive input validation and error handling for production reliability',
-      'Clean RESTful endpoint design following REST conventions strictly',
-    ],
-    stack: ['Node.js', 'Express.js', 'MongoDB', 'REST API', 'Input Validation', 'Mongoose'],
-    github: 'https://github.com/aeonstechdevops/StationaryX-BD',
-    live: null,
   },
 ]
 
@@ -165,10 +168,10 @@ export const OPEN_SOURCE = [
 
 export const EXPERIENCE = {
   company: 'Aeons Technologies',
-  role: 'Full Stack Developer',
+  role: 'Full Stack Developer Intern',
   type: 'Remote',
-  dateRange: 'Sep 2025 – Oct 2025',
-  duration: '2 months',
+  dateRange: 'Sep 2025 – Nov 2025',
+  duration: '3 months',
   responsibilities: [
     'Developed full-stack features using React.js, Node.js, and MongoDB, improving overall application responsiveness by 30% through optimized state management and API design.',
     'Designed and integrated scalable RESTful APIs following REST conventions, reducing backend data retrieval latency by 20% through efficient endpoint structuring.',
@@ -180,8 +183,8 @@ export const EXPERIENCE = {
 }
 
 export const STATS = [
-  { icon: 'GraduationCap', number: '9.16', label: 'CGPA out of 10' },
-  { icon: 'Code', number: '400+', label: 'LeetCode problems' },
+  { icon: 'GraduationCap', number: '9.21', label: 'CGPA out of 10' },
+  { icon: 'Code', number: '450+', label: 'LeetCode problems' },
   { icon: 'TrendUp', number: '1650+', label: 'LeetCode rating' },
-  { icon: 'GitMerge', number: '12+', label: 'OSS PRs merged' },
+  { icon: 'GitMerge', number: '15+', label: 'OSS PRs merged' },
 ]

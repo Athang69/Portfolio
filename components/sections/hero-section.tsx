@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 import { ArrowDown, DownloadSimple, GithubLogo, LinkedinLogo, XLogo } from '@phosphor-icons/react'
 import { ParticleField } from './particle-field'
 import { Typewriter } from '@/components/ui/typewriter'
@@ -42,7 +43,7 @@ const itemVariants = {
       ease: [0.16, 1, 0.3, 1],
     },
   },
-}
+} as unknown as Variants
 
 export function HeroSection() {
   return (

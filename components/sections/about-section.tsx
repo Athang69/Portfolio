@@ -20,9 +20,9 @@ const terminalContent = [
   { line: null, key: '"degree"', value: '"B.Tech ECE"', valueType: 'string' },
   { line: null, key: '"institution"', value: '"SGGS Nanded"', valueType: 'string' },
   { line: null, key: '"year"', value: '"3rd Year (2023–27)"', valueType: 'string' },
-  { line: null, key: '"cgpa"', value: '9.16', valueType: 'number' },
+  { line: null, key: '"cgpa"', value: '9.21', valueType: 'number' },
   { line: null, key: '"leetcode"', value: '"Top 14% · 1650+"', valueType: 'string' },
-  { line: null, key: '"problems"', value: '400', valueType: 'number' },
+  { line: null, key: '"problems"', value: '450', valueType: 'number' },
   { line: null, key: '"open_source"', value: '6', valueType: 'number' },
   { line: null, key: '"location"', value: '"India"', valueType: 'string' },
   { line: null, key: '"available_for"', value: '[', valueType: 'array_start' },
@@ -174,9 +174,9 @@ export function AboutSection() {
               work in the world.
             </p>
             <p className="font-sans text-[17px] text-[#F2F2FF] leading-[1.8] mb-8">
-              When I&apos;m not writing code, I&apos;m solving algorithmic problems on LeetCode (400+ problems,
+              When I&apos;m not writing code, I&apos;m solving algorithmic problems on LeetCode (450+ problems,
               Top 14% globally) or studying how distributed systems behave under pressure. My CGPA of
-              9.16 isn&apos;t just a number — it&apos;s proof that I don&apos;t choose between depth and breadth.
+              9.21 isn&apos;t just a number — it&apos;s proof that I don&apos;t choose between depth and breadth.
             </p>
 
             {/* Pull quote */}

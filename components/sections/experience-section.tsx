@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { SectionHeader } from '@/components/ui/section-header'
 import { EXPERIENCE } from '@/lib/constants'
+import { ArrowSquareOut } from '@phosphor-icons/react'
 
 export function ExperienceSection() {
   return (
@@ -33,6 +34,18 @@ export function ExperienceSection() {
             <div className="text-right">
               <p className="font-mono text-[13px] text-[#52526E]">{EXPERIENCE.dateRange}</p>
               <p className="font-mono text-[11px] text-[#2E2E45] mt-1">{EXPERIENCE.duration}</p>
+              <div className="mt-2 flex items-center justify-end gap-2">
+                <span className="font-mono text-[13px] text-[#52526E]">Certificate</span>
+                <a
+                  href="https://drive.google.com/file/d/1Elxi4uv47QLZAEnGCjGRs3Ow731NBdCi/view"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View ${EXPERIENCE.company} internship certificate`}
+                  className="text-[#52526E] hover:text-violet-400 transition-colors"
+                >
+                  <ArrowSquareOut size={18} />
+                </a>
+              </div>
             </div>
           </div>
 

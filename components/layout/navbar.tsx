@@ -31,7 +31,8 @@ export function Navbar() {
         const el = document.getElementById(section)
         if (el) {
           const rect = el.getBoundingClientRect()
-          if (rect.top <= 150) {
+          // Use a slightly larger threshold so sections with extra top padding register reliably
+          if (rect.top <= 220) {
             setActiveSection(section)
             break
           }
@@ -40,6 +41,8 @@ export function Navbar() {
     }
 
     window.addEventListener('scroll', handleScroll)
+    // call once to initialize active section on load
+    handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
