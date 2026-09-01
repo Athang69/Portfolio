@@ -1,0 +1,239 @@
+{
+  "generatedAt": "2026-09-01T17:33:15.710Z",
+  "leetcode": {
+    "username": "AthangOP",
+    "solved": 590,
+    "easy": 223,
+    "medium": 311,
+    "hard": 56,
+    "ranking": 145841,
+    "rating": 1687,
+    "globalRanking": 129268,
+    "totalParticipants": 879441,
+    "topPercentage": 14.96,
+    "contests": 43
+  },
+  "oss": [
+    {
+      "repo": "kubernetes-sigs/headlamp",
+      "merged": 21,
+      "open": 6,
+      "firstMerged": "2026-04-07",
+      "lastMerged": "2026-07-27",
+      "prs": [
+        {
+          "number": 6656,
+          "title": "ci: push-release-assets: Add cosign keyless signing for checksums",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6656",
+          "mergedAt": "2026-07-27"
+        },
+        {
+          "number": 6515,
+          "title": "headlamp-plugin: tsconfig: Migrate moduleResolution to bundler",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6515",
+          "mergedAt": "2026-07-22"
+        },
+        {
+          "number": 6439,
+          "title": "headlamp-plugin: config: remove deprecated baseUrl and moduleResolution=node10",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6439",
+          "mergedAt": "2026-07-13"
+        },
+        {
+          "number": 6188,
+          "title": "portforward: handler: Fix cluster name exposing userID suffix in response",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6188",
+          "mergedAt": "2026-07-13"
+        },
+        {
+          "number": 6136,
+          "title": "backend: cmd: Isolate TestDynamicClustersKubeConfig from real Headlamp config dir",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6136",
+          "mergedAt": "2026-06-23"
+        },
+        {
+          "number": 6076,
+          "title": "frontend: k8s: Move cluster hooks to api/v1/hooks to break circular import",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6076",
+          "mergedAt": "2026-06-23"
+        },
+        {
+          "number": 6002,
+          "title": "charts: Headlamp: Allow valueFrom in env values schema",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6002",
+          "mergedAt": "2026-06-23"
+        },
+        {
+          "number": 5993,
+          "title": "frontend: logs: persist follow and showTimestamps to localStorage",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5993",
+          "mergedAt": "2026-06-24"
+        },
+        {
+          "number": 5968,
+          "title": "frontend: common: Add ConditionList, PhaseLabel and getReadyCondition",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5968",
+          "mergedAt": "2026-06-26"
+        },
+        {
+          "number": 5920,
+          "title": "frontend: fix: Harden isValidRedirectPath against whitespace and URL-encoded protocol bypass",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5920",
+          "mergedAt": "2026-06-24"
+        },
+        {
+          "number": 5683,
+          "title": "backend: auth: Bound FuzzSanitizeClusterName input to prevent CI timeout",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5683",
+          "mergedAt": "2026-05-17"
+        },
+        {
+          "number": 5172,
+          "title": "backend: k8cache: Add tests for uncovered branches",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5172",
+          "mergedAt": "2026-04-27"
+        },
+        {
+          "number": 5152,
+          "title": "feat(pod): persist prettify log preference to localStorage",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5152",
+          "mergedAt": "2026-05-17"
+        },
+        {
+          "number": 5149,
+          "title": "backend: helm repository error handling and regression test coverage",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5149",
+          "mergedAt": "2026-04-16"
+        },
+        {
+          "number": 5139,
+          "title": "test(config): increase `pkg/config` test coverage from 74.2% to 83.9%",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5139",
+          "mergedAt": "2026-04-25"
+        },
+        {
+          "number": 5124,
+          "title": "backend(helm): add unit tests for handler.go",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5124",
+          "mergedAt": "2026-04-17"
+        },
+        {
+          "number": 5120,
+          "title": "helm: add authentication support to Helm repository operations",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5120",
+          "mergedAt": "2026-05-22"
+        },
+        {
+          "number": 5105,
+          "title": "test: add backend helm auth token and frontend RouteSwitcher key uniqueness tests",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5105",
+          "mergedAt": "2026-04-25"
+        },
+        {
+          "number": 5096,
+          "title": "fix: helm release auth token and route key collision for app catalog",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5096",
+          "mergedAt": "2026-05-12"
+        },
+        {
+          "number": 5085,
+          "title": "frontend: cronjob: Handle undefined spec.suspend in List and Details",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5085",
+          "mergedAt": "2026-04-09"
+        },
+        {
+          "number": 5060,
+          "title": "docs: fix typos, stale links, and outdated dependency versions",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5060",
+          "mergedAt": "2026-04-07"
+        }
+      ]
+    },
+    {
+      "repo": "kubearmor/KubeArmor",
+      "merged": 10,
+      "open": 9,
+      "firstMerged": "2026-04-06",
+      "lastMerged": "2026-07-29",
+      "prs": [
+        {
+          "number": 2804,
+          "title": "fix(deps): bump grpc to v1.82.1",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2804",
+          "mergedAt": "2026-07-29"
+        },
+        {
+          "number": 2699,
+          "title": "fix(ci): correct expression syntax in workflow if conditions",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2699",
+          "mergedAt": "2026-06-25"
+        },
+        {
+          "number": 2688,
+          "title": "feat: add openEuler 24.03 LTS-SP3 to support matrix",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2688",
+          "mergedAt": "2026-06-24"
+        },
+        {
+          "number": 2635,
+          "title": "fix(test): use KarmorGetTargetAlert in blockposture to fix intermittent CI failures",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2635",
+          "mergedAt": "2026-07-21"
+        },
+        {
+          "number": 2605,
+          "title": "fix(ci): install protoc binary in ci-test-systemd workflow",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2605",
+          "mergedAt": "2026-05-27"
+        },
+        {
+          "number": 2591,
+          "title": "fix(build): update Go dependencies to resolve known security vulnerabilities",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2591",
+          "mergedAt": "2026-05-13"
+        },
+        {
+          "number": 2585,
+          "title": "chore(ci): integrate Renovate bot and pin dependencies to improve Scorecard score from 0/10 to 6/10",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2585",
+          "mergedAt": "2026-06-25"
+        },
+        {
+          "number": 2559,
+          "title": "test(KubeArmor): add unit tests for main package",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2559",
+          "mergedAt": "2026-07-09"
+        },
+        {
+          "number": 2527,
+          "title": "fix(core): use TaskExit type to unmarshal containerd exit events",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2527",
+          "mergedAt": "2026-06-09"
+        },
+        {
+          "number": 2513,
+          "title": "docs(getting-started): fix typos in default_posture and alert_throttling",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2513",
+          "mergedAt": "2026-04-06"
+        }
+      ]
+    },
+    {
+      "repo": "vfarcic/dot-ai-headlamp",
+      "merged": 1,
+      "open": 0,
+      "firstMerged": "2026-04-14",
+      "lastMerged": "2026-04-14",
+      "prs": [
+        {
+          "number": 2,
+          "title": "fix: replace Function cast in API client and remove stray timeout from recommend body",
+          "url": "https://github.com/vfarcic/dot-ai-headlamp/pull/2",
+          "mergedAt": "2026-04-14"
+        }
+      ]
+    }
+  ],
+  "totalMerged": 32,
+  "totalOpen": 15
+}

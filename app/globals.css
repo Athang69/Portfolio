@@ -1,260 +1,318 @@
 @import 'tailwindcss';
-@import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
+/* ============================================================
+   THEMES. Each theme redefines the same token contract.
+   Switching sets data-theme on <html>.
+   ============================================================ */
 
 :root {
-  /* Backgrounds */
-  --bg-void: #08080E;
-  --bg-surface: #0F0F1A;
-  --bg-elevated: #161625;
-  --bg-overlay: #1D1D30;
-  --bg-glass: rgba(15, 15, 26, 0.6);
-
-  /* Text */
-  --text-primary: #F2F2FF;
-  --text-secondary: #9898B8;
-  --text-muted: #52526E;
-  --text-ghost: #2E2E45;
-
-  /* Accent — Violet */
-  --violet-50: #F0EEFF;
-  --violet-100: #D9D4FF;
-  --violet-200: #B8ADFF;
-  --violet-300: #9B8FFF;
-  --violet-400: #7C5CFC;
-  --violet-500: #6244E8;
-  --violet-600: #4A2FCC;
-  --violet-700: #351FA8;
-  --violet-800: #221380;
-  --violet-900: #130A58;
-
-  /* Accent — Cyan */
-  --cyan-50: #E8FEFF;
-  --cyan-100: #C0FBFF;
-  --cyan-200: #87F5FF;
-  --cyan-300: #44ECFF;
-  --cyan-400: #00D4FF;
-  --cyan-500: #00AEDA;
-  --cyan-600: #0087B2;
-  --cyan-700: #00638A;
-  --cyan-800: #004362;
-  --cyan-900: #00263A;
-
-  /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.05);
-  --border-default: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(124, 92, 252, 0.3);
-  --border-active: rgba(124, 92, 252, 0.6);
-  --border-cyan: rgba(0, 212, 255, 0.2);
-
-  /* Semantic tokens for shadcn compatibility */
-  --background: #08080E;
-  --foreground: #F2F2FF;
-  --card: #0F0F1A;
-  --card-foreground: #F2F2FF;
-  --popover: #1D1D30;
-  --popover-foreground: #F2F2FF;
-  --primary: #7C5CFC;
-  --primary-foreground: #FFFFFF;
-  --secondary: #161625;
-  --secondary-foreground: #F2F2FF;
-  --muted: #161625;
-  --muted-foreground: #9898B8;
-  --accent: #00D4FF;
-  --accent-foreground: #08080E;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #7C5CFC;
-  --radius: 0.625rem;
+  --bg: #16161f;
+  --bg2: #1c1c27;
+  --bg3: #22222e;
+  --bg4: #12121a;
+  --title: #101017;
+  --border: #2a2a38;
+  --text: #c9c9d4;
+  --dim: #6e6e85;
+  --bright: #f2f2ff;
+  --accent: #7c5cfc;
+  --blue: #82aaff;
+  --green: #4ec9b0;
+  --gcm: #6a9955;
+  --yellow: #dcdcaa;
+  --orange: #ce9178;
+  --purple: #c586c0;
+  --pink: #ff6fd8;
+  --red: #f44747;
+  --cyan: #56d4dd;
 }
 
+[data-theme='tokyo-night'] {
+  --bg: #1a1b26; --bg2: #16161e; --bg3: #1f2335; --bg4: #13131a; --title: #13131a;
+  --border: #2f3549; --text: #a9b1d6; --dim: #565f89; --bright: #c0caf5;
+  --accent: #7aa2f7; --blue: #7dcfff; --green: #9ece6a; --gcm: #565f89;
+  --yellow: #e0af68; --orange: #ff9e64; --purple: #bb9af7; --pink: #f7768e;
+  --red: #f7768e; --cyan: #2ac3de;
+}
+
+[data-theme='catppuccin'] {
+  --bg: #1e1e2e; --bg2: #181825; --bg3: #313244; --bg4: #11111b; --title: #11111b;
+  --border: #313244; --text: #cdd6f4; --dim: #6c7086; --bright: #f5e0dc;
+  --accent: #cba6f7; --blue: #89b4fa; --green: #a6e3a1; --gcm: #6c7086;
+  --yellow: #f9e2af; --orange: #fab387; --purple: #cba6f7; --pink: #f5c2e7;
+  --red: #f38ba8; --cyan: #94e2d5;
+}
+
+[data-theme='nord'] {
+  --bg: #2e3440; --bg2: #2b303b; --bg3: #3b4252; --bg4: #272c36; --title: #242933;
+  --border: #3b4252; --text: #d8dee9; --dim: #6d7a90; --bright: #eceff4;
+  --accent: #88c0d0; --blue: #81a1c1; --green: #a3be8c; --gcm: #616e88;
+  --yellow: #ebcb8b; --orange: #d08770; --purple: #b48ead; --pink: #b48ead;
+  --red: #bf616a; --cyan: #8fbcbb;
+}
+
+[data-theme='gruvbox'] {
+  --bg: #282828; --bg2: #32302f; --bg3: #3c3836; --bg4: #1d2021; --title: #1d2021;
+  --border: #3c3836; --text: #ebdbb2; --dim: #928374; --bright: #fbf1c7;
+  --accent: #fabd2f; --blue: #83a598; --green: #b8bb26; --gcm: #928374;
+  --yellow: #fabd2f; --orange: #fe8019; --purple: #d3869b; --pink: #d3869b;
+  --red: #fb4934; --cyan: #8ec07c;
+}
+
+[data-theme='dracula'] {
+  --bg: #282a36; --bg2: #21222c; --bg3: #343746; --bg4: #191a21; --title: #191a21;
+  --border: #3a3c4e; --text: #f8f8f2; --dim: #6272a4; --bright: #ffffff;
+  --accent: #bd93f9; --blue: #8be9fd; --green: #50fa7b; --gcm: #6272a4;
+  --yellow: #f1fa8c; --orange: #ffb86c; --purple: #bd93f9; --pink: #ff79c6;
+  --red: #ff5555; --cyan: #8be9fd;
+}
+
+/* Expose tokens as Tailwind colors. `inline` keeps the var() reference
+   in the output so runtime theme swapping works. */
 @theme inline {
-  --font-sans: 'Manrope', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --font-display: 'Clash Display', 'Syne', system-ui, sans-serif;
-  --font-serif: 'Instrument Serif', Georgia, serif;
-  
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-bg3: var(--bg3);
+  --color-bg4: var(--bg4);
+  --color-title: var(--title);
+  --color-line: var(--border);
+  --color-text: var(--text);
+  --color-dim: var(--dim);
+  --color-bright: var(--bright);
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-blue: var(--blue);
+  --color-green: var(--green);
+  --color-gcm: var(--gcm);
+  --color-yellow: var(--yellow);
+  --color-orange: var(--orange);
+  --color-purple: var(--purple);
+  --color-pink: var(--pink);
+  --color-red: var(--red);
+  --color-cyan: var(--cyan);
 
-  /* Custom colors */
-  --color-void: #08080E;
-  --color-surface: #0F0F1A;
-  --color-elevated: #161625;
-  --color-overlay: #1D1D30;
-  
-  --color-violet-50: #F0EEFF;
-  --color-violet-100: #D9D4FF;
-  --color-violet-200: #B8ADFF;
-  --color-violet-300: #9B8FFF;
-  --color-violet-400: #7C5CFC;
-  --color-violet-500: #6244E8;
-  --color-violet-600: #4A2FCC;
-  --color-violet-700: #351FA8;
-  --color-violet-800: #221380;
-  --color-violet-900: #130A58;
-  
-  --color-cyan-50: #E8FEFF;
-  --color-cyan-100: #C0FBFF;
-  --color-cyan-200: #87F5FF;
-  --color-cyan-300: #44ECFF;
-  --color-cyan-400: #00D4FF;
-  --color-cyan-500: #00AEDA;
-  --color-cyan-600: #0087B2;
-  --color-cyan-700: #00638A;
-  --color-cyan-800: #004362;
-  --color-cyan-900: #00263A;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: var(--font-display), 'Syne', system-ui, sans-serif;
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+/* ============================================================
+   BASE
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--title);
+  color: var(--text);
+  font-family: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body { transition: background-color .25s ease, color .25s ease; }
+
+::selection { background: color-mix(in srgb, var(--accent) 40%, transparent); color: var(--bright); }
+
+/* ============================================================
+   IDE SHELL. CSS grid, so the panels never fight each other
+   ============================================================ */
+
+.ide-shell {
+  display: grid;
+  height: 100dvh;
+  width: 100%;
+  grid-template-columns: 48px auto 1fr;
+  grid-template-rows: 32px 28px 1fr 22px;
+  grid-template-areas:
+    'title  title   title'
+    'menu   menu    menu'
+    'abar   side    main'
+    'status status  status';
+  overflow: hidden;
+}
+
+.ide-shell[data-sidebar='closed'] { grid-template-columns: 48px 0 1fr; }
+
+.area-title  { grid-area: title; }
+.area-menu   { grid-area: menu; }
+.area-abar   { grid-area: abar; }
+.area-side   { grid-area: side; }
+.area-main   { grid-area: main; min-width: 0; }
+.area-status { grid-area: status; }
+
+/* ============================================================
+   SCROLLBARS. VS Code style overlay bars
+   ============================================================ */
+
+.scroll-thin { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--dim) 45%, transparent) transparent; }
+.scroll-thin::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll-thin::-webkit-scrollbar-track { background: transparent; }
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--dim) 40%, transparent);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  border-radius: 6px;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--dim) 75%, transparent); background-clip: content-box; }
+.no-scroll::-webkit-scrollbar { display: none; }
+.no-scroll { scrollbar-width: none; }
+
+/* ============================================================
+   EDITOR CHROME
+   ============================================================ */
+
+/* active tab gets a top accent rule, like a real editor */
+.tab-active { position: relative; }
+.tab-active::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* line-number gutter */
+.gutter {
+  user-select: none;
+  text-align: right;
+  color: color-mix(in srgb, var(--dim) 65%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the fold/indent guide running down the left of a pane */
+.indent-guide { border-left: 1px solid color-mix(in srgb, var(--border) 90%, transparent); }
+
+/* ============================================================
+   MOTION. Restrained: fades, a caret, and a scroll reveal.
+   ============================================================ */
+
+@keyframes blink   { 50% { opacity: 0; } }
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes rise    { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+@keyframes pop     { from { opacity: 0; transform: translateY(-6px) scale(.99) } to { opacity: 1; transform: none } }
+
+.anim-fade { animation: fade-in .24s ease both; }
+.anim-rise { animation: rise .3s cubic-bezier(.22,.68,.35,1) both; }
+.anim-pop  { animation: pop .15s ease both; }
+
+.caret {
+  display: inline-block;
+  width: 7px;
+  height: 1.05em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: blink 1.05s step-end infinite;
+}
+
+.reveal { opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+.reveal.shown { opacity: 1; transform: none; }
+
+/* ============================================================
+   TYPE
+   ============================================================ */
+
+/* Display face, used only for names, page titles and figures. */
+.display {
+  font-family: var(--font-display), 'Syne', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+/* Disclosure arrows are drawn by the summary itself, not the browser. */
+summary::-webkit-details-marker { display: none; }
+
+/* ============================================================
+   RESPONSIVE. Below md the shell collapses to a single column
+   ============================================================ */
+
+@media (max-width: 860px) {
+  .ide-shell {
+    grid-template-columns: 44px 1fr;
+    grid-template-rows: 30px 1fr 22px;
+    grid-template-areas:
+      'title  title'
+      'abar   main'
+      'status status';
   }
-  
-  html {
-    scroll-behavior: smooth;
+  .area-menu { display: none; }
+  .area-side {
+    grid-area: main;
+    z-index: 40;
+    box-shadow: 12px 0 32px rgba(0, 0, 0, .45);
   }
-  
-  body {
-    @apply bg-void text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  ::selection {
-    background: rgba(124, 92, 252, 0.3);
-    color: #F2F2FF;
-  }
+  .ide-shell[data-sidebar='closed'] { grid-template-columns: 44px 1fr; }
+  .ide-shell[data-sidebar='closed'] .area-side { display: none; }
 }
 
-/* Custom animations */
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-@keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-@keyframes scroll-line {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(48px); opacity: 0; }
-}
-
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.animate-ticker {
-  animation: ticker 30s linear infinite;
-}
-
-.animate-blink {
-  animation: blink 1s step-end infinite;
-}
-
-.animate-pulse-dot {
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-scroll-line {
-  animation: scroll-line 1.5s ease-in-out infinite;
-}
-
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #F2F2FF 0%, #9B8FFF 50%, #44ECFF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-text-brand {
-  background: linear-gradient(135deg, #9B8FFF 0%, #44ECFF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glow effects */
-.glow-violet {
-  box-shadow: 0 0 20px rgba(124, 92, 252, 0.15), 0 0 60px rgba(124, 92, 252, 0.08);
-}
-
-.glow-violet-strong {
-  box-shadow: 0 0 40px rgba(124, 92, 252, 0.35);
-}
-
-.glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.15), 0 0 60px rgba(0, 212, 255, 0.08);
-}
-
-/* Glass effect */
-.glass {
-  background: rgba(15, 15, 26, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Hide scrollbar but allow scroll */
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* ============================================================
+   CUSTOM CURSOR. Only active once the script mounts, and never
+   on touch devices or under reduced-motion.
+   ============================================================ */
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--bright);
+  transition: opacity .2s ease, width .18s ease, height .18s ease, border-radius .18s ease, background-color .18s ease;
+}
+
+/* over text fields the dot becomes a caret-like beam */
+.cursor-dot[data-state='text'] {
+  width: 2px;
+  height: 20px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.cursor-ring {
+  width: 26px;
+  height: 26px;
+  border: 1px solid color-mix(in srgb, var(--text) 45%, transparent);
+  border-radius: 50%;
+  transition: opacity .2s ease, width .22s cubic-bezier(.22,.68,.35,1),
+              height .22s cubic-bezier(.22,.68,.35,1), border-color .22s ease,
+              background-color .22s ease, border-radius .22s ease;
+}
+
+.cursor-ring[data-state='active'] {
+  width: 42px;
+  height: 42px;
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.cursor-ring[data-state='text'] {
+  width: 16px;
+  height: 26px;
+  border-radius: 3px;
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.cursor-ring[data-pressed='true'] {
+  width: 20px;
+  height: 20px;
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+/* hide the native cursor only once ours is running */
+.has-custom-cursor,
+.has-custom-cursor * { cursor: none !important; }

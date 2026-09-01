@@ -1,14 +1,7 @@
 import type { Metadata, Viewport } from 'next'
-import { Manrope, JetBrains_Mono, Instrument_Serif } from 'next/font/google'
-import localFont from 'next/font/local'
+import { JetBrains_Mono, Syne } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
-
-const manrope = Manrope({
-  subsets: ['latin'],
-  variable: '--font-manrope',
-  display: 'swap',
-})
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -16,82 +9,57 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 })
 
-const instrumentSerif = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  style: 'italic',
-  variable: '--font-instrument',
-  display: 'swap',
-})
-
-// Using Syne as fallback for Clash Display
-import { Syne } from 'next/font/google'
-
 const syne = Syne({
   subsets: ['latin'],
+  weight: ['700', '800'],
   variable: '--font-display',
   display: 'swap',
 })
 
+const url = 'https://www.athangkali.me'
+const description =
+  'Full stack engineer and open source contributor. B.Tech ECE at SGGS Nanded (CGPA 9.21), 13 merged PRs across Kubernetes SIG projects, LeetCode top 14%.'
+
 export const metadata: Metadata = {
-  title: 'Athang Kali - Full Stack Developer & Open Source Contributor',
-  description:
-    'Third-year ECE student at SGGS Nanded. Full-stack developer (MERN), Kubernetes open-source contributor, LeetCode Top 14% (1650+, 450+ problems). CGPA 9.16.',
+  metadataBase: new URL(url),
+  title: 'Athang Kali | Portfolio',
+  description,
   keywords: [
-    'Athang Kali',
-    'Full Stack Developer',
-    'MERN Stack',
-    'React',
-    'Node.js',
-    'Kubernetes',
-    'Open Source',
-    'LeetCode',
-    'ECE',
-    'SGGS Nanded',
-    'Portfolio',
+    'Athang Kali', 'Full Stack Developer', 'MERN', 'React', 'Node.js', 'Go',
+    'Kubernetes', 'Headlamp', 'KubeArmor', 'Open Source', 'SGGS Nanded',
   ],
-  authors: [{ name: 'Athang Kali', url: 'https://athang-portfolio.vercel.app' }],
+  authors: [{ name: 'Athang Kali', url }],
   openGraph: {
     type: 'website',
-    url: 'https://athang-portfolio.vercel.app',
-    title: 'Athang Kali — Full Stack Developer',
-    description: 'ECE undergrad, MERN developer, Kubernetes contributor, LeetCode Top 14%.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    url,
+    title: 'Athang Kali, Systems Engineer and Open Source Contributor',
+    description,
+    siteName: 'Athang Kali',
   },
   twitter: {
     card: 'summary_large_image',
     site: '@AthangKali',
     creator: '@AthangKali',
-    title: 'Athang Kali — Full Stack Developer',
-    description: 'ECE undergrad, MERN developer, Kubernetes contributor, LeetCode Top 14%.',
-    images: ['/og-image.png'],
+    title: 'Athang Kali, Systems Engineer',
+    description,
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#08080E',
+  themeColor: '#16161f',
   width: 'device-width',
   initialScale: 1,
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${manrope.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} ${syne.variable} bg-void`}
-    >
-      <body className="font-sans antialiased">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:z-[200] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-violet-400 focus:text-white focus:rounded-md"
-        >
-          Skip to main content
-        </a>
+    <html lang="en" className={`${jetbrainsMono.variable} ${syne.variable}`}>
+      <body>
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

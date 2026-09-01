@@ -1,10 +1,11 @@
 {
-  "name": "my-project",
+  "name": "athang-kali-portfolio",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "sync": "node scripts/sync-stats.mjs",
+    "build": "node scripts/sync-stats.mjs; next build",
     "start": "next start",
     "lint": "eslint ."
   },
