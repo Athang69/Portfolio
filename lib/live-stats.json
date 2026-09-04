@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-01T17:33:15.710Z",
+  "generatedAt": "2026-09-04T09:30:01.631Z",
   "leetcode": {
     "username": "AthangOP",
-    "solved": 590,
-    "easy": 223,
+    "solved": 591,
+    "easy": 224,
     "medium": 311,
     "hard": 56,
-    "ranking": 145841,
+    "ranking": 145519,
     "rating": 1687,
-    "globalRanking": 129268,
-    "totalParticipants": 879441,
-    "topPercentage": 14.96,
+    "globalRanking": 129830,
+    "totalParticipants": 881221,
+    "topPercentage": 14.99,
     "contests": 43
   },
   "oss": [

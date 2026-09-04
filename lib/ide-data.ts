@@ -47,9 +47,79 @@ export const RESUME = { name: 'Athang_Kali_Resume.pdf', href: '/Athang_Kali_Resu
 
 /* ------------------------------------------------------------ live data */
 
+/**
+ * Shape of lib/live-stats.json, and of the /api/stats payload.
+ *
+ * Declared rather than inferred from the JSON: a field that happens to be
+ * populated in the current snapshot is still nullable when a source is
+ * unreachable, and the inferred type would not say so.
+ */
+export interface LiveStats {
+  generatedAt: string
+  leetcode: {
+    username: string
+    solved: number
+    easy: number
+    medium: number
+    hard: number
+    ranking: number | null
+    rating: number | null
+    globalRanking: number | null
+    totalParticipants: number | null
+    topPercentage: number | null
+    contests: number | null
+  }
+  oss: {
+    repo: string
+    merged: number
+    open: number
+    firstMerged: string | null
+    lastMerged: string | null
+    prs: { number: number; title: string; url: string; mergedAt: string | null }[]
+  }[]
+  totalMerged: number
+  totalOpen: number
+}
+
+/** The snapshot baked in at build time. Server rendering and metadata use it. */
+export const BAKED: LiveStats = live
+
 export const LEETCODE = live.leetcode
 export const TOTAL_MERGED = live.totalMerged
 export const TOTAL_OPEN = live.totalOpen
+
+/* ---------------------------------------------------------- mentorship */
+
+/**
+ * LFX Mentorship, CNCF 2026 Term 3. The lead credential on this site, so it
+ * renders on home.tsx, opensource.go and experience.ts from this one object.
+ */
+export const MENTORSHIP = {
+  status: 'Selected',
+  program: 'LFX Mentorship',
+  term: '2026 Term 3',
+  period: 'Sep 2026 to Nov 2026',
+  role: 'LFX Mentee',
+  org: 'CNCF · Headlamp and Kyverno',
+  project: 'Headlamp: Kyverno Policy Visualization and Operational Improvements',
+  summary:
+    'Selected to build the visual and operational layer of the Headlamp Kyverno plugin, the interface operators use to manage Kyverno policies from inside the CNCF Kubernetes dashboard.',
+  context:
+    'Kyverno is a CNCF graduated policy engine that validates, mutates and generates Kubernetes resources across thousands of clusters. The Headlamp plugin already reports compliance metrics, policies, reports and violations, but it is entirely read only. An operator cannot see which resources a policy affects, why it behaved the way it did, or what to change when a violation appears.',
+  deliverables: [
+    'Policy Impact Map, showing exactly which cluster resources a policy matches and the rule that matched them.',
+    'Violation drill down, tracing a rejected resource to the rule that failed it and the change that would fix it.',
+    'Prometheus integration, putting live policy engine health next to the existing compliance data.',
+    'Detail views for Kyverno v2 CEL based policies, which the plugin does not currently render.',
+    'Kyverno registered as a source in the Headlamp Map view.',
+    'Full internationalisation coverage and accessibility work across every component.',
+  ],
+  stack: ['React', 'TypeScript', 'Kubernetes', 'Kyverno', 'CEL', 'Prometheus', 'i18n', 'Accessibility'],
+  links: [
+    { label: 'LFX Mentorship', url: 'https://mentorship.lfx.linuxfoundation.org/project/db537dd6-3ea7-49d0-9a53-f0b4ad772add' },
+    { label: 'Headlamp plugins', url: 'https://github.com/headlamp-k8s/plugins' },
+  ],
+}
 
 /* ---------------------------------------------------------------- home */
 
@@ -57,7 +127,7 @@ export const HERO = {
   first: 'Athang',
   last: 'Kali',
   roles: ['Systems Engineer', 'Cloud Native / Backend', 'Open Source Contributor'],
-  affiliation: 'CNCF Contributor · Headlamp · KubeArmor',
+  affiliation: `LFX Mentee ${MENTORSHIP.term.split(' ')[0]} · CNCF Headlamp · KubeArmor`,
   typed: [
     'kernel adjacent systems in C++.',
     'Go services that hold under load.',
@@ -65,29 +135,16 @@ export const HERO = {
     'distributed fleet management.',
   ],
   summary:
-    'Systems focused software engineer with significant open source contributions across CNCF projects, spanning security policy enforcement, plugin architecture and supply chain hardening. Proficient in Go and C++, with hands-on experience in kernel level systems programming, container orchestration internals and Kubernetes ecosystem development.',
+    'Systems focused software engineer and CNCF contributor, selected as an LFX mentee for 2026 Term 3 to extend the Headlamp Kyverno plugin. My open source work spans security policy enforcement, plugin architecture and supply chain hardening. Proficient in Go and C++, with hands-on experience in kernel level systems programming, container orchestration internals and Kubernetes ecosystem development.',
   seeking: 'Open to software engineering roles in Systems, Cloud Native and Backend Development.',
-  stats: [
-    { value: String(TOTAL_MERGED), label: 'PRs merged' },
-    { value: '104', label: 'CNCF contributions' },
-    { value: String(LEETCODE.solved), label: 'problems solved' },
-    { value: String(LEETCODE.rating), label: 'LeetCode rating' },
-  ],
+  stats: heroStats(live),
 }
 
 /* --------------------------------------------------------------- about */
 
 export const ABOUT = {
-  intro:
-    'I work on systems software, mostly in Go and C++, close to the metal: kernel level programming, container orchestration internals and distributed agents. Most of that work happens in the open, across CNCF projects like Headlamp and KubeArmor, where 32 of my pull requests have been merged. I am in my final year of an engineering degree, and I spend most of it writing code that ships.',
-  focus: [
-    { icon: '01', text: 'Plugin architecture, Helm internals and frontend stability in Headlamp, the CNCF Kubernetes dashboard' },
-    { icon: '02', text: 'Runtime security in KubeArmor: policy enforcement, container lifecycle events, CI reliability' },
-    { icon: '03', text: 'Supply chain hardening through SLSA, OpenSSF Scorecard and signed release artifacts' },
-    { icon: '04', text: 'C++ systems work: distributed Linux fleet agents and parallel file processing' },
-    { icon: '05', text: `LeetCode ${LEETCODE.rating} rating, top ${LEETCODE.topPercentage}%, ${LEETCODE.solved} problems solved` },
-    { icon: '06', text: 'Happy to talk about Go, C++, Kubernetes internals or eBPF' },
-  ],
+  intro: aboutIntro(live),
+  focus: aboutFocus(live),
   education: [
     {
       school: 'Shri Guru Gobind Singhji Institute of Engineering and Technology',
@@ -226,13 +283,17 @@ export interface OssRepo {
   prs: { number: number; title: string; url: string; mergedAt: string | null }[]
 }
 
-export const OSS: OssRepo[] = live.oss
-  .map((o) => ({
-    ...o,
-    ...(REPO_META[o.repo] ?? { tag: 'Open Source', blurb: '', wins: [], order: 99 }),
-    allPrs: `https://github.com/${o.repo}/pulls?q=is%3Apr+author%3AAthang69`,
-  }))
-  .sort((a, b) => a.order - b.order)
+function ossRepos(s: LiveStats): OssRepo[] {
+  return s.oss
+    .map((o) => ({
+      ...o,
+      ...(REPO_META[o.repo] ?? { tag: 'Open Source', blurb: '', wins: [], order: 99 }),
+      allPrs: `https://github.com/${o.repo}/pulls?q=is%3Apr+author%3AAthang69`,
+    }))
+    .sort((a, b) => a.order - b.order)
+}
+
+export const OSS: OssRepo[] = ossRepos(live)
 
 /* ------------------------------------------------------- CNCF contributor */
 
@@ -258,43 +319,74 @@ export const CNCF_CARD = {
 
 /* ----------------------------------------------------------- experience */
 
-export const EXPERIENCE_LIST = [
-  {
-    period: 'Apr 2026 to present',
-    role: 'Open Source Contributor',
-    org: 'CNCF · Headlamp and KubeArmor',
-    mode: 'Community',
-    current: true,
-    link: { label: 'View contributions', url: 'https://github.com/Athang69' },
-    bullets: [
-      `${TOTAL_MERGED} pull requests merged across Headlamp and KubeArmor, with ${TOTAL_OPEN} more in review, totalling ${CNCF_CARD.contributions} contributions to ${CNCF_CARD.repoCount} CNCF repositories.`,
-      'Shipped stability fixes into Headlamp: a CronJob detail crash, a portforward handler leaking userID suffixes, and a test that overwrote real user kubeconfig.',
-      'Added authenticated Helm repository support to Headlamp, unlocking private registry workflows for operators.',
-      'Broke a circular frontend import in Headlamp by relocating cluster hooks, unblocking static analysis across the codebase.',
-      'Raised the KubeArmor OpenSSF Scorecard from 0/10 to 6/10 by introducing Renovate and pinning every dependency.',
-      'Corrected containerd exit event handling in KubeArmor and stabilised intermittent CI failures in the block posture suite.',
-    ],
-    stack: ['Go', 'Kubernetes', 'React', 'TypeScript', 'Helm', 'OpenSSF Scorecard'],
-  },
-  {
-    period: 'Sep 2026 to Nov 2026',
-    role: 'Full Stack Developer Intern',
-    org: 'Aeons Technologies',
-    mode: 'Remote',
-    current: true,
-    link: {
-      label: 'View certificate',
-      url: 'https://drive.google.com/file/d/1Elxi4uv47QLZAEnGCjGRs3Ow731NBdCi/view?usp=sharing',
+export interface ExperienceEntry {
+  period: string
+  role: string
+  org: string
+  mode: string
+  current: boolean
+  /** Set on the single lead credential, which renders with an accent badge. */
+  featured?: boolean
+  link: { label: string; url: string }
+  bullets: string[]
+  stack: string[]
+}
+
+function experienceList(s: LiveStats): ExperienceEntry[] {
+  return [
+    {
+      period: MENTORSHIP.period,
+      role: MENTORSHIP.role,
+      org: MENTORSHIP.org,
+      mode: MENTORSHIP.term,
+      current: true,
+      featured: true,
+      link: { label: 'About LFX Mentorship', url: MENTORSHIP.links[0].url },
+      bullets: [
+        `Selected through the Linux Foundation mentorship programme for ${MENTORSHIP.project}, working with Headlamp maintainers on the plugin operators use to manage Kyverno policies.`,
+        ...MENTORSHIP.deliverables,
+      ],
+      stack: MENTORSHIP.stack,
     },
-    bullets: [
-      'Shipped full stack features across React, Node and MongoDB, improving application responsiveness by 30%.',
-      'Designed RESTful APIs that cut data retrieval latency by 20%, and reworked MongoDB indexing to bring query times down materially.',
-      'Introduced input validation and consistent error handling, reducing runtime failures in production.',
-      'Worked to an agile Git workflow: branch hygiene, peer reviewed pull requests and continuous integration.',
-    ],
-    stack: ['React.js', 'Node.js', 'MongoDB', 'REST APIs', 'Git', 'Agile'],
-  },
-]
+    {
+      period: 'Apr 2026 to present',
+      role: 'Open Source Contributor',
+      org: 'CNCF · Headlamp and KubeArmor',
+      mode: 'Community',
+      current: true,
+      link: { label: 'View contributions', url: 'https://github.com/Athang69' },
+      bullets: [
+        `${s.totalMerged} pull requests merged across Headlamp and KubeArmor, with ${s.totalOpen} more in review, totalling ${CNCF_CARD.contributions} contributions to ${CNCF_CARD.repoCount} CNCF repositories.`,
+        'Shipped stability fixes into Headlamp: a CronJob detail crash, a portforward handler leaking userID suffixes, and a test that overwrote real user kubeconfig.',
+        'Added authenticated Helm repository support to Headlamp, unlocking private registry workflows for operators.',
+        'Broke a circular frontend import in Headlamp by relocating cluster hooks, unblocking static analysis across the codebase.',
+        'Raised the KubeArmor OpenSSF Scorecard from 0/10 to 6/10 by introducing Renovate and pinning every dependency.',
+        'Corrected containerd exit event handling in KubeArmor and stabilised intermittent CI failures in the block posture suite.',
+      ],
+      stack: ['Go', 'Kubernetes', 'React', 'TypeScript', 'Helm', 'OpenSSF Scorecard'],
+    },
+    {
+      period: 'Sep 2025 to Nov 2025',
+      role: 'Full Stack Developer Intern',
+      org: 'Aeons Technologies',
+      mode: 'Remote',
+      current: false,
+      link: {
+        label: 'View certificate',
+        url: 'https://drive.google.com/file/d/1Elxi4uv47QLZAEnGCjGRs3Ow731NBdCi/view?usp=sharing',
+      },
+      bullets: [
+        'Shipped full stack features across React, Node and MongoDB, improving application responsiveness by 30%.',
+        'Designed RESTful APIs that cut data retrieval latency by 20%, and reworked MongoDB indexing to bring query times down materially.',
+        'Introduced input validation and consistent error handling, reducing runtime failures in production.',
+        'Worked to an agile Git workflow: branch hygiene, peer reviewed pull requests and continuous integration.',
+      ],
+      stack: ['React.js', 'Node.js', 'MongoDB', 'REST APIs', 'Git', 'Agile'],
+    },
+  ]
+}
+
+export const EXPERIENCE_LIST: ExperienceEntry[] = experienceList(live)
 
 /* --------------------------------------------------------- publications */
 
@@ -318,7 +410,7 @@ export interface SkillGroup {
 
 export const SKILL_GROUPS: SkillGroup[] = [
   { group: 'Languages', items: ['Go', 'C++', 'JavaScript', 'TypeScript', 'SQL', 'Shell', 'YAML', 'Python'] },
-  { group: 'Cloud Native and Security', items: ['Kubernetes', 'eBPF', 'KubeArmor', 'Docker', 'SLSA', 'OpenSSF Scorecard', 'GitHub Actions'] },
+  { group: 'Cloud Native and Security', items: ['Kubernetes', 'eBPF', 'Kyverno', 'KubeArmor', 'CEL', 'Docker', 'SLSA', 'OpenSSF Scorecard', 'GitHub Actions'] },
   { group: 'Web', items: ['Next.js', 'React.js', 'Node.js', 'Express.js', 'Tailwind CSS', 'WebSocket', 'REST APIs'] },
   { group: 'Databases', items: ['MySQL', 'MongoDB', 'PostgreSQL', 'Prisma', 'Redis'] },
   { group: 'Observability', items: ['Prometheus', 'Grafana', 'Node Exporter'] },
@@ -332,23 +424,32 @@ export const ALSO_KNOWN = [
 
 /* ------------------------------------------------------------ highlights */
 
-export const HIGHLIGHTS = [
-  {
-    label: `LeetCode ${LEETCODE.rating}, top ${LEETCODE.topPercentage}%`,
-    detail: `${LEETCODE.solved} problems solved across ${LEETCODE.contests} contests, with strong algorithmic and DSA fundamentals.`,
-    url: 'https://leetcode.com/u/AthangOP/',
-  },
-  {
-    label: 'Open source impact',
-    detail: `${TOTAL_MERGED} pull requests merged into CNCF projects, with ${TOTAL_OPEN} currently in review.`,
-    url: 'https://github.com/Athang69',
-  },
-  {
-    label: 'Academic record',
-    detail: 'CGPA 9.21 in B.Tech Electronics and Telecommunication Engineering.',
-    url: null,
-  },
-]
+function highlights(s: LiveStats) {
+  return [
+    {
+      label: `${MENTORSHIP.program}, CNCF ${MENTORSHIP.term}`,
+      detail: MENTORSHIP.summary,
+      url: MENTORSHIP.links[0].url,
+    },
+    {
+      label: `LeetCode ${s.leetcode.rating}, top ${s.leetcode.topPercentage}%`,
+      detail: `${s.leetcode.solved} problems solved across ${s.leetcode.contests} contests, with strong algorithmic and DSA fundamentals.`,
+      url: 'https://leetcode.com/u/AthangOP/',
+    },
+    {
+      label: 'Open source impact',
+      detail: `${s.totalMerged} pull requests merged into CNCF projects, with ${s.totalOpen} currently in review.`,
+      url: 'https://github.com/Athang69',
+    },
+    {
+      label: 'Academic record',
+      detail: 'CGPA 9.21 in B.Tech Electronics and Telecommunication Engineering.',
+      url: null,
+    },
+  ]
+}
+
+export const HIGHLIGHTS = highlights(live)
 
 /* -------------------------------------------------------------- contact */
 
@@ -361,3 +462,58 @@ export const LINKS = [
   { key: 'Website', value: 'athangkali.me', href: SITE },
   { key: 'Phone', value: '+91 93095 88914', href: 'tel:+919309588914' },
 ]
+
+/* ============================================================ live layer */
+
+/*
+ * Every number on this site comes from one of the builders below. The
+ * constants above are these builders applied to the build time snapshot, so
+ * server rendered HTML is correct for SEO and for the first paint. derive()
+ * applies the same builders to whatever /api/stats returns, which is how the
+ * LeetCode and pull request counts move without a redeploy.
+ */
+
+function heroStats(s: LiveStats) {
+  return [
+    { value: String(s.totalMerged), label: 'PRs merged' },
+    { value: '104', label: 'CNCF contributions' },
+    { value: String(s.leetcode.solved), label: 'problems solved' },
+    { value: String(s.leetcode.rating), label: 'LeetCode rating' },
+  ]
+}
+
+function aboutIntro(s: LiveStats) {
+  return `I work on systems software, mostly in Go and C++, close to the metal: kernel level programming, container orchestration internals and distributed agents. Most of that work happens in the open, across CNCF projects like Headlamp and KubeArmor, where ${s.totalMerged} of my pull requests have been merged. That work led to an LFX mentorship with CNCF for 2026 Term 3, building policy visualisation into the Headlamp Kyverno plugin. I am in my final year of an engineering degree, and I spend most of it writing code that ships.`
+}
+
+function aboutFocus(s: LiveStats) {
+  return [
+    { icon: '01', text: 'LFX mentee for CNCF 2026 Term 3, building the Policy Impact Map and violation drill down for the Headlamp Kyverno plugin' },
+    { icon: '02', text: 'Plugin architecture, Helm internals and frontend stability in Headlamp, the CNCF Kubernetes dashboard' },
+    { icon: '03', text: 'Runtime security in KubeArmor: policy enforcement, container lifecycle events, CI reliability' },
+    { icon: '04', text: 'Supply chain hardening through SLSA, OpenSSF Scorecard and signed release artifacts' },
+    { icon: '05', text: 'C++ systems work: distributed Linux fleet agents and parallel file processing' },
+    { icon: '06', text: `LeetCode ${s.leetcode.rating} rating, top ${s.leetcode.topPercentage}%, ${s.leetcode.solved} problems solved` },
+    { icon: '07', text: 'Happy to talk about Go, C++, Kubernetes internals or eBPF' },
+  ]
+}
+
+export type SiteData = ReturnType<typeof derive>
+
+export function derive(s: LiveStats) {
+  return {
+    syncedAt: s.generatedAt,
+    leetcode: s.leetcode,
+    totalMerged: s.totalMerged,
+    totalOpen: s.totalOpen,
+    stats: heroStats(s),
+    aboutIntro: aboutIntro(s),
+    aboutFocus: aboutFocus(s),
+    highlights: highlights(s),
+    experience: experienceList(s),
+    oss: ossRepos(s),
+  }
+}
+
+/** derive() applied to the build time snapshot. */
+export const DEFAULTS: SiteData = derive(BAKED)

@@ -107,7 +107,7 @@ export function Minimap({ scrollRef, paneId }: { scrollRef: RefObject<HTMLDivEle
       </div>
 
       <div
-        className="pointer-events-none absolute inset-x-0 border-y border-white/10 bg-white/[0.07] transition-[top] duration-75"
+        className="pointer-events-none absolute inset-x-0 border-y border-white/10 bg-hover transition-[top] duration-75"
         style={{ top: `${box.top}%`, height: `${box.height}%` }}
       />
     </div>

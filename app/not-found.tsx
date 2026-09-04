@@ -7,7 +7,7 @@ export default function NotFound() {
 
       <h1 className="display mt-5 text-[clamp(2.4rem,7vw,4rem)] text-bright">File not found</h1>
 
-      <p className="mt-4 max-w-[46ch] text-[13px] leading-relaxed text-text/80">
+      <p className="mt-4 max-w-[46ch] text-[13px] leading-relaxed text-text/85">
         That path is not in this workspace. Nothing is broken, the file simply does not exist.
       </p>
 

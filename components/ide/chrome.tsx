@@ -8,15 +8,26 @@ import {
 } from './icons'
 
 export const THEMES = [
-  { id: 'default', name: 'Athang Dark', glyph: '🟣' },
-  { id: 'tokyo-night', name: 'Tokyo Night', glyph: '🌃' },
-  { id: 'catppuccin', name: 'Catppuccin', glyph: '🐱' },
-  { id: 'nord', name: 'Nord', glyph: '🧊' },
-  { id: 'gruvbox', name: 'Gruvbox', glyph: '🔥' },
-  { id: 'dracula', name: 'Dracula', glyph: '🧛' },
+  { id: 'default', name: 'Athang Dark', glyph: '🟣', mode: 'dark' },
+  { id: 'tokyo-night', name: 'Tokyo Night', glyph: '🌃', mode: 'dark' },
+  { id: 'catppuccin', name: 'Catppuccin', glyph: '🐱', mode: 'dark' },
+  { id: 'nord', name: 'Nord', glyph: '🧊', mode: 'dark' },
+  { id: 'gruvbox', name: 'Gruvbox', glyph: '🔥', mode: 'dark' },
+  { id: 'dracula', name: 'Dracula', glyph: '🧛', mode: 'dark' },
+  { id: 'light', name: 'Athang Light', glyph: '☀️', mode: 'light' },
+  { id: 'github-light', name: 'GitHub Light', glyph: '📄', mode: 'light' },
+  { id: 'solarized-light', name: 'Solarized Light', glyph: '🍯', mode: 'light' },
 ] as const
 
 export type ThemeId = (typeof THEMES)[number]['id']
+
+/** The theme applied on a first visit, from the reader's OS preference. */
+export function preferredTheme(): ThemeId {
+  return typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-color-scheme: light)').matches
+    ? 'light'
+    : 'default'
+}
 
 /* ============================================================ title bar */
 
@@ -74,11 +85,11 @@ export function TitleBar({ onPalette }: { onPalette: () => void }) {
       >
         <SearchIcon size={11} />
         <span>
-          {WORKSPACE} <span className="text-dim/60">:</span> portfolio
+          {WORKSPACE} <span className="text-dim">:</span> portfolio
         </span>
         <span className="ml-1 hidden gap-1 sm:flex">
-          <kbd className="rounded bg-white/10 px-1 py-px text-[9px]">Ctrl</kbd>
-          <kbd className="rounded bg-white/10 px-1 py-px text-[9px]">K</kbd>
+          <kbd className="rounded bg-active px-1 py-px text-[9px]">Ctrl</kbd>
+          <kbd className="rounded bg-active px-1 py-px text-[9px]">K</kbd>
         </span>
       </button>
 
@@ -137,7 +148,7 @@ export function MenuBar({ onAction }: { onAction: (a: string) => void }) {
           <button
             onClick={() => setOpen(open === name ? null : name)}
             onMouseEnter={() => open && setOpen(name)}
-            className={`rounded px-2 py-0.5 text-[11px] transition ${open === name ? 'bg-white/10 text-bright' : 'text-text hover:bg-white/[0.07]'}`}
+            className={`rounded px-2 py-0.5 text-[11px] transition ${open === name ? 'bg-active text-bright' : 'text-text hover:bg-hover'}`}
           >
             {name}
           </button>
@@ -198,7 +209,7 @@ export function ActivityBar({
           >
             <Icon />
             {badge && (
-              <span className="absolute bottom-1.5 right-1.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white">
+              <span className="absolute bottom-1.5 right-1.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-on-accent">
                 {badge}
               </span>
             )}
@@ -249,7 +260,7 @@ export function TabBar({
                 onClose(id)
               }}
               aria-label={`Close ${f.name}`}
-              className={`rounded p-0.5 transition hover:bg-white/15 ${on ? 'opacity-70' : 'opacity-0 group-hover:opacity-70'}`}
+              className={`rounded p-0.5 transition hover:bg-active ${on ? 'opacity-70' : 'opacity-0 group-hover:opacity-70'}`}
             >
               <CloseIcon />
             </button>
@@ -270,7 +281,7 @@ export function Breadcrumb({ id }: { id: FileId }) {
     <div className="flex h-[26px] shrink-0 items-center gap-1.5 border-b border-line bg-bg px-4 text-[11px] text-dim">
       {crumbs.map((c, i) => (
         <span key={c} className="flex items-center gap-1.5">
-          {i > 0 && <span className="text-dim/50">›</span>}
+          {i > 0 && <span className="text-dim">›</span>}
           <span className={i === crumbs.length - 1 ? 'text-text' : ''}>{c}</span>
         </span>
       ))}
@@ -300,10 +311,10 @@ export function StatusBar({
 
   const lang = FILES.find((f) => f.id === file)!.lang
   const theme = THEMES.find((t) => t.id === themeId)!
-  const cell = 'flex items-center gap-1.5 px-2 h-full transition hover:bg-white/20'
+  const cell = 'flex items-center gap-1.5 px-2 h-full transition hover:bg-strong'
 
   return (
-    <div className="area-status flex items-center bg-accent text-[11px] text-white">
+    <div className="area-status flex items-center bg-accent text-[11px] text-on-accent">
       <button onClick={onTerminal} className={cell}>
         <span>⚠ 0</span>
         <span>✕ 0</span>
@@ -343,21 +354,28 @@ export function ThemePicker({
         <div className="border-b border-line px-4 py-2.5 text-[11px] uppercase tracking-[0.14em] text-dim">
           Preferences: Color Theme
         </div>
-        {THEMES.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => {
-              onPick(t.id)
-              onClose()
-            }}
-            className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-[12px] transition ${
-              themeId === t.id ? 'bg-accent/25 text-bright' : 'text-text hover:bg-white/[0.06]'
-            }`}
-          >
-            <span>{t.glyph}</span>
-            <span className="flex-1">{t.name}</span>
-            {themeId === t.id && <span className="text-[10px] text-dim">current</span>}
-          </button>
+        {(['dark', 'light'] as const).map((mode) => (
+          <div key={mode}>
+            <div className="border-b border-line bg-bg4/60 px-4 py-1.5 text-[10px] uppercase tracking-[0.16em] text-dim">
+              {mode}
+            </div>
+            {THEMES.filter((t) => t.mode === mode).map((t) => (
+              <button
+                key={t.id}
+                onClick={() => {
+                  onPick(t.id)
+                  onClose()
+                }}
+                className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-[12px] transition ${
+                  themeId === t.id ? 'bg-accent/25 text-bright' : 'text-text hover:bg-hover'
+                }`}
+              >
+                <span>{t.glyph}</span>
+                <span className="flex-1">{t.name}</span>
+                {themeId === t.id && <span className="text-[10px] text-dim">current</span>}
+              </button>
+            ))}
+          </div>
         ))}
       </div>
     </div>

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { FILES, RESUME, type FileId } from '@/lib/ide-data'
 import {
   ActivityBar, Breadcrumb, MenuBar, StatusBar, TabBar, ThemePicker, TitleBar,
-  type PanelId, type ThemeId,
+  preferredTheme, type PanelId, type ThemeId,
 } from '@/components/ide/chrome'
 import { Sidebar } from '@/components/ide/sidebar'
 import { EditorPane } from '@/components/ide/panes'
@@ -61,7 +61,8 @@ export default function Page() {
 
   useEffect(() => {
     const saved = localStorage.getItem(THEME_KEY) as ThemeId | null
-    if (saved) setThemeId(saved)
+    // No stored choice means a first visit, so follow the OS preference.
+    setThemeId(saved ?? preferredTheme())
     // on phones the sidebar overlays the editor, so start with content visible
     if (window.innerWidth <= 860) setSidebar(false)
   }, [])

@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useSiteData } from '@/lib/use-site-data'
 import {
-  ABOUT, ALSO_KNOWN, CNCF_CARD, EXPERIENCE_LIST, HERO, HIGHLIGHTS, LEETCODE, LINKS, OSS,
-  PROJECT_LIST, PUBLICATIONS, RESUME, SKILL_GROUPS, SYNCED_AT, TOTAL_MERGED,
-  TOTAL_OPEN, type FileId,
+  ABOUT, ALSO_KNOWN, CNCF_CARD, HERO, LINKS, MENTORSHIP, PROJECT_LIST, PUBLICATIONS,
+  RESUME, SKILL_GROUPS,
+  type FileId,
 } from '@/lib/ide-data'
 import { ExternalIcon } from './icons'
 import { Minimap } from './minimap'
@@ -124,7 +125,7 @@ function Bullets({ items }: { items: string[] }) {
   return (
     <ul className="space-y-2.5">
       {items.map((b) => (
-        <li key={b} className="flex gap-3 text-[13px] leading-[1.8] text-text/80">
+        <li key={b} className="flex gap-3 text-[13px] leading-[1.8] text-text/85">
           <span className="mt-[9px] h-px w-3 shrink-0 bg-dim/60" />
           <span>{b}</span>
         </li>
@@ -144,6 +145,60 @@ function LinkOut({ href, children }: { href: string; children: ReactNode }) {
       {children}
       <ExternalIcon size={10} />
     </a>
+  )
+}
+
+/**
+ * The lead credential on this site. Compact on home.tsx, full scope on
+ * opensource.go. Both render from the single MENTORSHIP object.
+ */
+function MentorshipCard({ full = false }: { full?: boolean }) {
+  const m = MENTORSHIP
+
+  return (
+    <section className="reveal border border-accent/40">
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 border-b border-accent/25 px-6 py-3.5">
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+        <span className="text-[10.5px] uppercase tracking-[0.22em] text-accent">{m.status}</span>
+        <span className="text-dim/40">·</span>
+        <span className="text-[10.5px] uppercase tracking-[0.22em] text-dim">
+          {m.program} {m.term}
+        </span>
+      </div>
+
+      <div className="px-6 py-7">
+        <h3 className="display text-[clamp(1.2rem,2.6vw,1.6rem)] leading-[1.35] text-bright">
+          {m.project}
+        </h3>
+
+        <p className="mt-3 text-[12px] text-dim">
+          {m.org}
+          <span className="text-dim/40"> · </span>
+          {m.period}
+        </p>
+
+        <p className="mt-6 max-w-[64ch] text-[13px] leading-[1.8] text-text/85">{m.summary}</p>
+
+        {full && (
+          <>
+            <p className="mt-5 max-w-[64ch] text-[12.5px] leading-[1.8] text-text/85">{m.context}</p>
+            <div className="mt-9">
+              <Label>Scope</Label>
+              <Bullets items={m.deliverables} />
+            </div>
+          </>
+        )}
+
+        <div className="mt-8 border-t border-line pt-5">
+          <Tags items={m.stack} />
+          <div className="mt-4 flex flex-wrap gap-x-7 gap-y-2">
+            {m.links.map((l) => (
+              <LinkOut key={l.url} href={l.url}>{l.label}</LinkOut>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -176,6 +231,7 @@ function useTyped(words: string[]) {
 }
 
 export function HomePane({ onOpen }: { onOpen: (id: FileId) => void }) {
+  const d = useSiteData()
   const typed = useTyped(HERO.typed)
 
   return (
@@ -219,8 +275,12 @@ export function HomePane({ onOpen }: { onOpen: (id: FileId) => void }) {
         </a>
       </div>
 
+      <div className="mt-14">
+        <MentorshipCard />
+      </div>
+
       <div className="reveal mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-line pt-10 sm:grid-cols-4">
-        {HERO.stats.map((s) => (
+        {d.stats.map((s) => (
           <div key={s.label}>
             <div className="display text-[1.75rem] leading-none text-bright">{s.value}</div>
             <div className="mt-2.5 text-[10.5px] uppercase tracking-[0.16em] text-dim">{s.label}</div>
@@ -246,20 +306,21 @@ export function HomePane({ onOpen }: { onOpen: (id: FileId) => void }) {
 /* ============================================================== about.md */
 
 export function AboutPane() {
+  const d = useSiteData()
   return (
     <Pane id="about" comment="<!-- about.md -->">
       <PageTitle sub="Background, current focus and record.">About</PageTitle>
 
       <div className="max-w-[68ch]">
-        <Body>{ABOUT.intro}</Body>
+        <Body>{d.aboutIntro}</Body>
       </div>
 
       <section className="reveal mt-16">
         <Label>Current focus</Label>
         <ul className="space-y-4">
-          {ABOUT.focus.map((f) => (
+          {d.aboutFocus.map((f) => (
             <li key={f.text} className="flex gap-5">
-              <span className="w-5 shrink-0 pt-px text-[11px] tabular-nums text-dim/70">{f.icon}</span>
+              <span className="w-5 shrink-0 pt-px text-[11px] tabular-nums text-dim">{f.icon}</span>
               <span className="text-[13px] leading-[1.8] text-text/85">{f.text}</span>
             </li>
           ))}
@@ -288,12 +349,12 @@ export function AboutPane() {
       <section className="reveal mt-16">
         <Label>Highlights</Label>
         <div className="space-y-7">
-          {HIGHLIGHTS.map((h) => (
+          {d.highlights.map((h) => (
             <div key={h.label}>
               <p className="text-[13px] text-bright">
                 {h.url ? <LinkOut href={h.url}>{h.label}</LinkOut> : h.label}
               </p>
-              <p className="mt-1.5 text-[12.5px] leading-relaxed text-text/75">{h.detail}</p>
+              <p className="mt-1.5 text-[12.5px] leading-relaxed text-text/85">{h.detail}</p>
             </div>
           ))}
         </div>
@@ -313,7 +374,7 @@ export function ProjectsPane() {
         {PROJECT_LIST.map((p, i) => (
           <article key={p.title} className="reveal">
             <div className="mb-5 flex items-baseline gap-4">
-              <span className="text-[11px] tabular-nums text-dim/70">{String(i + 1).padStart(2, '0')}</span>
+              <span className="text-[11px] tabular-nums text-dim">{String(i + 1).padStart(2, '0')}</span>
               <Tags items={p.tags} />
             </div>
 
@@ -374,7 +435,7 @@ function CncfCard() {
           <p className="text-[10.5px] uppercase tracking-[0.18em] text-dim">First contribution</p>
           <a href={c.firstContribution.url} target="_blank" rel="noreferrer" className="group mt-3 block">
             <p className="text-[13px] text-text transition group-hover:text-bright">{c.firstContribution.repo}</p>
-            <p className="mt-1.5 max-w-[60ch] text-[12.5px] leading-relaxed text-text/70">
+            <p className="mt-1.5 max-w-[60ch] text-[12.5px] leading-relaxed text-text/85">
               {c.firstContribution.title}
             </p>
             <p className="mt-1.5 text-[11.5px] text-dim">{c.firstContribution.date}</p>
@@ -399,16 +460,21 @@ function CncfCard() {
 /* ========================================================= opensource.go */
 
 export function OpenSourcePane() {
+  const d = useSiteData()
   return (
     <Pane id="opensource" comment="// opensource.go">
-      <PageTitle sub={`${TOTAL_MERGED} pull requests merged into CNCF projects, with ${TOTAL_OPEN} more in review.`}>
+      <PageTitle sub={`${d.totalMerged} pull requests merged into CNCF projects, with ${d.totalOpen} more in review.`}>
         Open Source
       </PageTitle>
+
+      <div className="mb-20">
+        <MentorshipCard full />
+      </div>
 
       <CncfCard />
 
       <div className="space-y-20">
-        {OSS.map((o) => (
+        {d.oss.map((o) => (
           <section key={o.repo} className="reveal">
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
               <h3 className="text-[15px] text-bright">
@@ -421,7 +487,7 @@ export function OpenSourcePane() {
               </span>
             </div>
 
-            <p className="mt-2 text-[11.5px] uppercase tracking-[0.16em] text-dim/80">{o.tag}</p>
+            <p className="mt-2 text-[11.5px] uppercase tracking-[0.16em] text-dim">{o.tag}</p>
 
             <div className="mt-5 max-w-[68ch]">
               <Body>{o.blurb}</Body>
@@ -442,11 +508,11 @@ export function OpenSourcePane() {
                 {o.prs.map((pr) => (
                   <li key={pr.number}>
                     <a href={pr.url} target="_blank" rel="noreferrer" className="group/pr flex gap-4">
-                      <span className="w-14 shrink-0 text-[11.5px] tabular-nums text-dim/70">#{pr.number}</span>
-                      <span className="flex-1 text-[12.5px] leading-relaxed text-text/75 transition group-hover/pr:text-bright">
+                      <span className="w-14 shrink-0 text-[11.5px] tabular-nums text-dim">#{pr.number}</span>
+                      <span className="flex-1 text-[12.5px] leading-relaxed text-text/85 transition group-hover/pr:text-bright">
                         {pr.title}
                       </span>
-                      <span className="hidden w-[76px] shrink-0 text-right text-[11px] tabular-nums text-dim/50 sm:block">
+                      <span className="hidden w-[76px] shrink-0 text-right text-[11px] tabular-nums text-dim sm:block">
                         {pr.mergedAt}
                       </span>
                     </a>
@@ -461,8 +527,8 @@ export function OpenSourcePane() {
         ))}
       </div>
 
-      <p className="mt-20 border-t border-line pt-5 text-[11px] text-dim/70">
-        Pull request counts and listings sync directly from the GitHub API. Last updated {new Date(SYNCED_AT).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.
+      <p className="mt-20 border-t border-line pt-5 text-[11px] text-dim">
+        Pull request counts and listings sync directly from the GitHub API. Last updated {new Date(d.syncedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.
       </p>
     </Pane>
   )
@@ -471,13 +537,21 @@ export function OpenSourcePane() {
 /* ========================================================= experience.ts */
 
 export function ExperiencePane() {
+  const d = useSiteData()
   return (
     <Pane id="experience" comment="// experience.ts">
       <PageTitle sub="Open source work and professional engagements.">Experience</PageTitle>
 
       <div className="space-y-20">
-        {EXPERIENCE_LIST.map((e) => (
+        {d.experience.map((e) => (
           <section key={e.role + e.org} className="reveal">
+            {e.featured && (
+              <p className="mb-5 inline-flex items-center gap-2.5 border border-accent/40 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-accent">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                {MENTORSHIP.status} · {MENTORSHIP.program}
+              </p>
+            )}
+
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
               <h3 className="display text-[1.4rem] text-bright">{e.role}</h3>
               <span className="text-[12px] text-dim">{e.period}</span>
@@ -485,7 +559,7 @@ export function ExperiencePane() {
 
             <p className="mt-2.5 text-[13px] text-text">
               {e.org}
-              <span className="text-dim/50"> · </span>
+              <span className="text-dim"> · </span>
               <span className="text-dim">{e.mode}</span>
             </p>
 
@@ -511,6 +585,7 @@ export function ExperiencePane() {
 /* =========================================================== skills.json */
 
 export function SkillsPane() {
+  const d = useSiteData()
   return (
     <Pane id="skills" comment="// skills.json">
       <PageTitle sub="Technologies I work with, grouped by domain.">Skills</PageTitle>
@@ -547,10 +622,10 @@ export function SkillsPane() {
         <Label>Problem solving</Label>
         <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4">
           {[
-            { v: String(LEETCODE.solved), l: 'solved' },
-            { v: String(LEETCODE.rating), l: 'rating' },
-            { v: `${LEETCODE.topPercentage}%`, l: 'top percentile' },
-            { v: String(LEETCODE.contests), l: 'contests' },
+            { v: String(d.leetcode.solved), l: 'solved' },
+            { v: String(d.leetcode.rating), l: 'rating' },
+            { v: `${d.leetcode.topPercentage}%`, l: 'top percentile' },
+            { v: String(d.leetcode.contests), l: 'contests' },
           ].map((s) => (
             <div key={s.l}>
               <div className="display text-[1.6rem] leading-none text-bright">{s.v}</div>
@@ -558,8 +633,8 @@ export function SkillsPane() {
             </div>
           ))}
         </div>
-        <p className="mt-6 text-[11px] text-dim/70">
-          Synced from the LeetCode API on {new Date(SYNCED_AT).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.
+        <p className="mt-6 text-[11px] text-dim">
+          Synced from the LeetCode API on {new Date(d.syncedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.
         </p>
       </section>
     </Pane>
@@ -664,7 +739,7 @@ export function ContactPane() {
   }
 
   const field =
-    'w-full rounded border border-line bg-bg2/40 px-3 py-2.5 text-[13px] text-text outline-none transition placeholder:text-dim/45 focus:border-accent focus:bg-bg2/70'
+    'w-full rounded border border-line bg-bg2/40 px-3 py-2.5 text-[13px] text-text outline-none transition placeholder:text-dim focus:border-accent focus:bg-bg2/70'
 
   return (
     <Pane id="contact" comment="#!/bin/bash">
@@ -680,7 +755,7 @@ export function ContactPane() {
                 href={l.href}
                 target={l.href.startsWith('http') ? '_blank' : undefined}
                 rel="noreferrer"
-                className="group flex items-baseline gap-4 rounded px-2 py-2.5 transition hover:bg-white/[0.035]"
+                className="group flex items-baseline gap-4 rounded px-2 py-2.5 transition hover:bg-hover"
               >
                 <span className="w-[74px] shrink-0 text-[10.5px] uppercase tracking-[0.16em] text-dim">
                   {l.key}
@@ -718,7 +793,7 @@ export function ContactPane() {
 
             <label className="block">
               <span className="mb-1.5 block text-[10.5px] uppercase tracking-[0.16em] text-dim">
-                Subject <span className="tracking-normal text-dim/60">optional</span>
+                Subject <span className="tracking-normal text-dim">optional</span>
               </span>
               <input name="subject" placeholder="What is this about?" className={field} />
             </label>
@@ -735,7 +810,7 @@ export function ContactPane() {
               <button
                 type="submit"
                 disabled={state === 'sending'}
-                className="rounded bg-accent px-5 py-2.5 text-[12.5px] font-medium text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded bg-accent px-5 py-2.5 text-[12.5px] font-medium text-on-accent transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {state === 'sending' ? 'Sending...' : 'Send message'}
               </button>
@@ -760,7 +835,7 @@ export function ContactPane() {
             </div>
 
             {state === 'error' && error && (
-              <p className="text-[11px] text-dim/80">Reason: {error}</p>
+              <p className="text-[11px] text-dim">Reason: {error}</p>
             )}
 
             {!CONTACT_ENDPOINT && (
@@ -779,6 +854,7 @@ export function ContactPane() {
 /* ============================================================= README.md */
 
 export function ReadmePane() {
+  const d = useSiteData()
   const stack = [
     ['Languages', 'Go, C++, JavaScript, TypeScript, SQL, Shell, YAML, Python'],
     ['Cloud native', 'Kubernetes, eBPF, Docker, SLSA, OpenSSF Scorecard, GitHub Actions'],
@@ -795,13 +871,13 @@ export function ReadmePane() {
       </p>
 
       <div className="mt-12 max-w-[68ch]">
-        <Body>{ABOUT.intro}</Body>
+        <Body>{d.aboutIntro}</Body>
       </div>
 
       <section className="reveal mt-16">
         <Label>At a glance</Label>
         <div className="grid grid-cols-2 gap-x-8 gap-y-9 sm:grid-cols-4">
-          {HERO.stats.map((s) => (
+          {d.stats.map((s) => (
             <div key={s.label}>
               <div className="display text-[1.6rem] leading-none text-bright">{s.value}</div>
               <div className="mt-2.5 text-[10.5px] uppercase tracking-[0.16em] text-dim">{s.label}</div>
@@ -837,7 +913,7 @@ export function ReadmePane() {
         </div>
       </section>
 
-      <p className="mt-20 border-t border-line pt-5 text-[11px] text-dim/70">
+      <p className="mt-20 border-t border-line pt-5 text-[11px] text-dim">
         Built with Next.js and React. Statistics sync from the GitHub and LeetCode APIs.
       </p>
     </Pane>

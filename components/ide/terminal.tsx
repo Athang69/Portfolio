@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useSiteData } from '@/lib/use-site-data'
 import {
-  ABOUT, EXPERIENCE_LIST, FILES, HERO, LEETCODE, LINKS, OSS, PROJECT_LIST,
+  ABOUT, EXPERIENCE_LIST, FILES, HERO, LEETCODE, LINKS, MENTORSHIP, OSS, PROJECT_LIST,
   PUBLICATIONS, RESUME, SKILL_GROUPS, TOTAL_MERGED, TOTAL_OPEN, WORKSPACE,
   type FileId,
 } from '@/lib/ide-data'
@@ -43,6 +44,8 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
 
   useEffect(() => { inputRef.current?.focus() }, [])
 
+  const d = useSiteData()
+
   const push = (...l: Line[]) => setLines((s) => [...s, ...l])
 
   const run = (raw: string) => {
@@ -67,6 +70,7 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
           { text: '  cat <file>    print a file summary' },
           { text: '  projects      list shipped projects' },
           { text: '  oss           open source contributions' },
+          { text: '  lfx           CNCF mentorship, 2026 Term 3' },
           { text: '  skills        the stack' },
           { text: '  experience    work history' },
           { text: '  contact       how to reach me' },
@@ -77,6 +81,17 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
           { text: '  date          current time' },
           { text: '  clear         wipe the screen' },
           { text: '  exit          close the terminal' },
+        )
+        break
+
+      case 'lfx':
+      case 'mentorship':
+        push(
+          { text: `${MENTORSHIP.status} · ${MENTORSHIP.program} · CNCF ${MENTORSHIP.term}`, tone: 'green' },
+          { text: MENTORSHIP.project },
+          { text: `${MENTORSHIP.org} · ${MENTORSHIP.period}`, tone: 'dim' },
+          { text: '' },
+          ...MENTORSHIP.deliverables.map((d) => ({ text: '  ' + d, tone: 'dim' as const })),
         )
         break
 
@@ -123,8 +138,8 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
         break
 
       case 'oss':
-        push({ text: `${TOTAL_MERGED} merged pull requests, ${TOTAL_OPEN} in review`, tone: 'green' })
-        OSS.forEach((o) =>
+        push({ text: `${d.totalMerged} merged pull requests, ${d.totalOpen} in review`, tone: 'green' })
+        d.oss.forEach((o) =>
           push({ text: `  ${o.repo.padEnd(30)} ${o.merged} merged, ${o.open} open`, tone: 'blue' }),
         )
         break
@@ -143,7 +158,7 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
         break
 
       case 'experience':
-        EXPERIENCE_LIST.forEach((e) =>
+        d.experience.forEach((e) =>
           push(
             { text: `${e.period}  ${e.role}`, tone: 'green' },
             { text: `   @ ${e.org} · ${e.mode}`, tone: 'dim' },
@@ -172,8 +187,9 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
           { text: `Shell     react-shell 19.0`, tone: 'dim' },
           { text: `Uptime    ${ABOUT.education[0].period}`, tone: 'dim' },
           { text: `CGPA      9.21 / 10`, tone: 'dim' },
-          { text: `LeetCode  ${LEETCODE.rating} rating, ${LEETCODE.solved} solved, top ${LEETCODE.topPercentage}%`, tone: 'dim' },
-          { text: `OSS       ${TOTAL_MERGED} merged, ${TOTAL_OPEN} in review`, tone: 'dim' },
+          { text: `LeetCode  ${d.leetcode.rating} rating, ${d.leetcode.solved} solved, top ${d.leetcode.topPercentage}%`, tone: 'dim' },
+          { text: `OSS       ${d.totalMerged} merged, ${d.totalOpen} in review`, tone: 'dim' },
+          { text: `LFX       ${MENTORSHIP.program}, CNCF ${MENTORSHIP.term}`, tone: 'dim' },
         )
         break
 
@@ -230,7 +246,7 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
         <span className="border-b border-accent pb-1 text-text">TERMINAL</span>
         <span className="text-dim">PROBLEMS</span>
         <span className="text-dim">OUTPUT</span>
-        <button onClick={onClose} aria-label="Close terminal" className="ml-auto rounded p-1 text-dim transition hover:bg-white/10 hover:text-text">
+        <button onClick={onClose} aria-label="Close terminal" className="ml-auto rounded p-1 text-dim transition hover:bg-active hover:text-text">
           <CloseIcon />
         </button>
       </div>

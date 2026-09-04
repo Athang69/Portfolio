@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { JetBrains_Mono, Syne } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { LEETCODE, MENTORSHIP, TOTAL_MERGED } from '@/lib/ide-data'
 import './globals.css'
 
 const jetbrainsMono = JetBrains_Mono({
@@ -18,7 +19,7 @@ const syne = Syne({
 
 const url = 'https://www.athangkali.me'
 const description =
-  'Full stack engineer and open source contributor. B.Tech ECE at SGGS Nanded (CGPA 9.21), 13 merged PRs across Kubernetes SIG projects, LeetCode top 14%.'
+  `Systems engineer and CNCF contributor. LFX mentee for ${MENTORSHIP.term} on Headlamp Kyverno policy visualization. ${TOTAL_MERGED} merged pull requests across Headlamp and KubeArmor, LeetCode top ${LEETCODE.topPercentage}%.`
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
@@ -26,7 +27,8 @@ export const metadata: Metadata = {
   description,
   keywords: [
     'Athang Kali', 'Full Stack Developer', 'MERN', 'React', 'Node.js', 'Go',
-    'Kubernetes', 'Headlamp', 'KubeArmor', 'Open Source', 'SGGS Nanded',
+    'Kubernetes', 'Headlamp', 'KubeArmor', 'Kyverno', 'CNCF', 'LFX Mentorship',
+    'Open Source', 'SGGS Nanded',
   ],
   authors: [{ name: 'Athang Kali', url }],
   openGraph: {

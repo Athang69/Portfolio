@@ -1,9 +1,10 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useSiteData } from '@/lib/use-site-data'
 import {
-  FILES, RESUME, WORKSPACE, PROJECT_LIST, OSS, SKILL_GROUPS, PUBLICATIONS,
-  TOTAL_MERGED, type FileId,
+  FILES, RESUME, WORKSPACE, PROJECT_LIST, SKILL_GROUPS, PUBLICATIONS,
+  type FileId, type SiteData,
 } from '@/lib/ide-data'
 import { ChevronIcon, FileIcon, GitIcon, SparkIcon } from './icons'
 import type { PanelId } from './chrome'
@@ -30,7 +31,7 @@ function Explorer({
       key={id}
       onClick={() => onOpen(id)}
       className={`flex w-full items-center gap-2 py-[5px] text-left text-[12px] transition ${
-        active === id ? 'bg-accent/20 text-bright' : 'text-text/85 hover:bg-white/[0.05]'
+        active === id ? 'bg-accent/20 text-bright' : 'text-text/85 hover:bg-hover'
       }`}
       style={{ paddingLeft: 10 + depth * 14, paddingRight: 10 }}
     >
@@ -49,7 +50,7 @@ function Explorer({
             <div key={folder.key}>
               <button
                 onClick={() => setOpen((s) => ({ ...s, [folder.key]: !s[folder.key] }))}
-                className="flex w-full items-center gap-1 px-2 py-[5px] text-[11px] font-semibold uppercase tracking-wide text-text/70 transition hover:bg-white/[0.05]"
+                className="flex w-full items-center gap-1 px-2 py-[5px] text-[11px] font-semibold uppercase tracking-wide text-text/85 transition hover:bg-hover"
               >
                 <ChevronIcon open={isOpen} />
                 <span>{folder.label}</span>
@@ -65,7 +66,7 @@ function Explorer({
           <a
             href={RESUME.href}
             download
-            className="group flex w-full items-center gap-2 px-[10px] py-[5px] text-[12px] text-text/85 transition hover:bg-white/[0.05]"
+            className="group flex w-full items-center gap-2 px-[10px] py-[5px] text-[12px] text-text/85 transition hover:bg-hover"
           >
             <FileIcon kind="pdf" />
             <span className="truncate">{RESUME.name}</span>
@@ -101,10 +102,10 @@ function Explorer({
 
 interface Hit { id: FileId; file: string; line: string; icon: string }
 
-function buildIndex(): Hit[] {
+function buildIndex(oss: SiteData['oss']): Hit[] {
   const hits: Hit[] = []
   PROJECT_LIST.forEach((p) => hits.push({ id: 'projects', file: 'projects.tsx', line: `${p.title}: ${p.stack.join(', ')}`, icon: 'tsx' }))
-  OSS.forEach((o) => hits.push({ id: 'opensource', file: 'opensource.go', line: `${o.repo}, ${o.merged} merged pull requests`, icon: 'go' }))
+  oss.forEach((o) => hits.push({ id: 'opensource', file: 'opensource.go', line: `${o.repo}, ${o.merged} merged pull requests`, icon: 'go' }))
   SKILL_GROUPS.forEach((g) => hits.push({ id: 'skills', file: 'skills.json', line: `"${g.group}": [${g.items.join(', ')}]`, icon: 'json' }))
   hits.push({ id: 'experience', file: 'experience.ts', line: 'Full Stack Developer Intern, Aeons Technologies', icon: 'ts' })
   hits.push({ id: 'experience', file: 'experience.ts', line: 'Open Source Contributor, CNCF Headlamp and KubeArmor', icon: 'ts' })
@@ -115,8 +116,9 @@ function buildIndex(): Hit[] {
 }
 
 function Search({ onOpen }: { onOpen: (id: FileId) => void }) {
+  const d = useSiteData()
   const [q, setQ] = useState('')
-  const index = useMemo(buildIndex, [])
+  const index = useMemo(() => buildIndex(d.oss), [d])
   const results = useMemo(
     () => (q.trim().length < 2 ? [] : index.filter((h) => h.line.toLowerCase().includes(q.toLowerCase()))),
     [q, index],
@@ -141,7 +143,7 @@ function Search({ onOpen }: { onOpen: (id: FileId) => void }) {
           <button
             key={i}
             onClick={() => onOpen(h.id)}
-            className="w-full rounded px-2 py-1.5 text-left transition hover:bg-white/[0.06]"
+            className="w-full rounded px-2 py-1.5 text-left transition hover:bg-hover"
           >
             <div className="flex items-center gap-1.5 text-[11px] text-dim">
               <FileIcon kind={h.icon} size={12} />
@@ -172,14 +174,14 @@ function Scm() {
     <div className="flex-1 overflow-y-auto px-3 py-2 scroll-thin">
       <div className="mb-1 text-[10px] uppercase tracking-[0.14em] text-dim">Changes</div>
       {changes.map((c) => (
-        <div key={c.file} className="flex items-center gap-2 rounded px-1 py-1 text-[12px] text-text hover:bg-white/[0.05]">
+        <div key={c.file} className="flex items-center gap-2 rounded px-1 py-1 text-[12px] text-text hover:bg-hover">
           <span className="truncate">{c.file}</span>
           <span className="ml-auto font-bold" style={{ color: c.color }}>{c.tag}</span>
         </div>
       ))}
       <div className="mb-1 mt-4 text-[10px] uppercase tracking-[0.14em] text-dim">Commits</div>
       {log.map((l) => (
-        <div key={l.hash} className="rounded px-1 py-1.5 hover:bg-white/[0.05]">
+        <div key={l.hash} className="rounded px-1 py-1.5 hover:bg-hover">
           <div className="flex items-center gap-2 text-[11px]">
             <span className="text-yellow">{l.hash}</span>
             <span className="text-dim">{l.when}</span>
@@ -194,9 +196,10 @@ function Scm() {
 /* ============================================================ run panel */
 
 function Run({ onOpen }: { onOpen: (id: FileId) => void }) {
+  const d = useSiteData()
   const configs: { label: string; sub: string; id: FileId }[] = [
     { label: 'Launch projects', sub: `${PROJECT_LIST.length} shipped`, id: 'projects' },
-    { label: 'Launch open source', sub: `${TOTAL_MERGED} merged pull requests`, id: 'opensource' },
+    { label: 'Launch open source', sub: `${d.totalMerged} merged pull requests`, id: 'opensource' },
     { label: 'Launch experience', sub: 'career timeline', id: 'experience' },
     { label: 'Launch contact', sub: 'get in touch', id: 'contact' },
   ]
@@ -207,7 +210,7 @@ function Run({ onOpen }: { onOpen: (id: FileId) => void }) {
         <button
           key={c.id}
           onClick={() => onOpen(c.id)}
-          className="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition hover:bg-white/[0.06]"
+          className="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition hover:bg-hover"
         >
           <span className="text-green">▶</span>
           <span className="flex-1">
@@ -223,9 +226,10 @@ function Run({ onOpen }: { onOpen: (id: FileId) => void }) {
 /* ========================================================== extensions */
 
 function Extensions() {
+  const d = useSiteData()
   const list = [
-    { name: 'kubernetes-sigs.headlamp', pub: 'CNCF Kubernetes dashboard', installs: `${OSS[0]?.merged ?? 0} merged`, color: 'var(--blue)' },
-    { name: 'kubearmor.runtime-security', pub: 'CNCF runtime security', installs: `${OSS[1]?.merged ?? 0} merged`, color: 'var(--green)' },
+    { name: 'kubernetes-sigs.headlamp', pub: 'CNCF Kubernetes dashboard', installs: `${d.oss[0]?.merged ?? 0} merged`, color: 'var(--blue)' },
+    { name: 'kubearmor.runtime-security', pub: 'CNCF runtime security', installs: `${d.oss[1]?.merged ?? 0} merged`, color: 'var(--green)' },
     { name: 'mern.full-stack', pub: 'React · Node · Mongo', installs: 'daily driver', color: 'var(--cyan)' },
     { name: 'golang.go', pub: 'Fiber · Redis', installs: 'in use', color: 'var(--cyan)' },
     { name: 'leetcode.dsa', pub: 'algorithms and DSA', installs: 'top percentile', color: 'var(--orange)' },
@@ -234,7 +238,7 @@ function Extensions() {
     <div className="flex-1 overflow-y-auto px-3 py-2 scroll-thin">
       <div className="mb-1.5 text-[10px] uppercase tracking-[0.14em] text-dim">Installed</div>
       {list.map((e) => (
-        <div key={e.name} className="flex gap-2.5 rounded px-1.5 py-2 transition hover:bg-white/[0.05]">
+        <div key={e.name} className="flex gap-2.5 rounded px-1.5 py-2 transition hover:bg-hover">
           <div
             className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded text-[13px] font-bold"
             style={{ background: `color-mix(in srgb, ${e.color} 20%, transparent)`, color: e.color }}
@@ -272,7 +276,7 @@ export function Sidebar({
 }) {
   return (
     <aside className="area-side flex w-[240px] flex-col overflow-hidden border-r border-line bg-bg2 select-none">
-      <div className="px-4 pb-1.5 pt-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-text/80">
+      <div className="px-4 pb-1.5 pt-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-text/85">
         {TITLES[panel]}
       </div>
       {panel === 'explorer' && <Explorer active={active} onOpen={onOpen} onAssistant={onAssistant} />}

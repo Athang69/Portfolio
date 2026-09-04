@@ -123,7 +123,7 @@ export function CommandPalette({
                   onMouseEnter={() => setSel(i)}
                   onClick={() => { c.run(); onClose() }}
                   className={`flex w-full items-center gap-2.5 px-4 py-2 text-left text-[12.5px] transition ${
-                    i === sel ? 'bg-accent/25 text-bright' : 'text-text hover:bg-white/[0.05]'
+                    i === sel ? 'bg-accent/25 text-bright' : 'text-text hover:bg-hover'
                   }`}
                 >
                   {c.icon ? <FileIcon kind={c.icon} size={14} /> : <span className="w-[14px] text-center text-dim">›</span>}

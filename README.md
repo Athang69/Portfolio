@@ -15,16 +15,43 @@ npm run dev      # http://localhost:3000
 
 ## Live statistics
 
-LeetCode and GitHub numbers are not hardcoded. `scripts/sync-stats.mjs` pulls
-them into `lib/live-stats.json`:
+LeetCode and GitHub numbers are never hardcoded. They refresh at two levels.
+
+**At build time.** `scripts/sync-stats.mjs` pulls them into
+`lib/live-stats.json`:
 
 ```bash
 npm run sync
 ```
 
-It also runs automatically as `prebuild`, so every deploy ships fresh numbers.
-If an API call fails the previous committed values are kept, so a flaky network
-can never break a build.
+It runs as part of `build`, so the server rendered HTML always ships correct
+numbers for SEO and for the first paint. If an API call fails, the previous
+committed value for that source is kept, so a flaky network can never break a
+build.
+
+**At runtime.** A build time snapshot alone would freeze the LeetCode count
+until the next deploy, so `app/api/stats/route.ts` refetches both APIs and the
+client swaps the numbers in on mount. The route is an ISR endpoint with
+`revalidate = 1800`, so LeetCode and GitHub see at most one round of calls
+every 30 minutes no matter how much traffic arrives. Any source that fails
+falls back to its build time value, so the payload is always complete.
+
+`lib/use-site-data.ts` is the client half: one fetch per page load however many
+components subscribe, the baked snapshot as both the server and first client
+render so hydration matches exactly, and a silent fall back to that snapshot if
+the fetch fails. Stale numbers beat a broken pane.
+
+`GET /api/stats` reports which sources were live and which fell back:
+
+```json
+{ "sources": { "leetcode": "live", "kubernetes-sigs/headlamp": "live" },
+  "complete": true }
+```
+
+Every number on the site is built by one of the small builder functions at the
+bottom of `lib/ide-data.ts`. The exported constants are those builders applied
+to the baked snapshot; `derive()` applies the same builders to the live payload.
+Add a number in one place and both paths pick it up.
 
 **Optional but recommended on Vercel:** set `GITHUB_TOKEN` (a classic token with
 no scopes is enough) in the project's environment variables. Unauthenticated
@@ -61,6 +88,41 @@ drop `NEXT_PUBLIC_WEB3FORMS_KEY`. Formspree works unchanged:
 ```
 NEXT_PUBLIC_CONTACT_ENDPOINT=https://formspree.io/f/<form-id>
 ```
+
+## Social card
+
+`app/opengraph-image.tsx` and `app/twitter-image.tsx` both render
+`lib/og-card.tsx` to a 1200x630 PNG at build time, which is what LinkedIn,
+WhatsApp, Slack, X and the rest show when the link is shared. Nothing on the
+site itself uses it.
+
+The card reads from `lib/ide-data.ts`, so the name, roles, mentorship line and
+the four statistics can never drift from the site. The stats sync runs before
+the build, so the numbers in the image are as fresh as the deploy.
+
+Fonts are committed under `assets/` as **woff**, deliberately:
+
+- Satori, which renders the card, cannot parse woff2, so the files `next/font`
+  already downloads are unusable here.
+- Fetching from Google Fonts during the build would make deploys depend on a
+  third party being reachable.
+
+To change the design, edit `lib/og-card.tsx` and rebuild. Satori supports a
+subset of CSS: flexbox only, and any element with more than one child needs an
+explicit `display`, which is why the interpolated strings in that file are
+single template literals rather than several adjacent expressions.
+
+## Themes
+
+Nine themes, six dark and three light, each redefining the same token contract
+in `app/globals.css`. A first visit follows the reader's OS preference; after
+that the choice persists in `localStorage`.
+
+Every theme's `--dim`, `--gcm` and `--text` are tuned to clear WCAG AA against
+that theme's own `--bg`, and `--on-accent` is picked per theme, because white
+text fails on the pastel accents used by Catppuccin, Nord and Gruvbox. Hover and
+selection washes go through `--hover`, `--active` and `--strong` rather than
+hardcoded white, which would vanish on a light background.
 
 ## Keyboard
 

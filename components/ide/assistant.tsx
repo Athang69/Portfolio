@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSiteData } from '@/lib/use-site-data'
 import {
-  ABOUT, CNCF_CARD, EXPERIENCE_LIST, HERO, LEETCODE, LINKS, OSS, PROJECT_LIST,
-  PUBLICATIONS, RESUME, SKILL_GROUPS, TOTAL_MERGED, TOTAL_OPEN, WORKSPACE,
-  type FileId,
+  ABOUT, CNCF_CARD, HERO, LINKS, MENTORSHIP, PROJECT_LIST,
+  PUBLICATIONS, RESUME, SKILL_GROUPS, WORKSPACE,
+  type FileId, type SiteData,
 } from '@/lib/ide-data'
 import { CloseIcon, SparkIcon } from './icons'
 
@@ -16,10 +17,19 @@ import { CloseIcon, SparkIcon } from './icons'
 
 interface Entry { keys: string[]; answer: string; open?: FileId }
 
-const KB: Entry[] = [
+function buildKb(d: SiteData): Entry[] {
+  return [
+  {
+    keys: ['lfx', 'mentor', 'kyverno', 'linux foundation', 'selected', 'term 3', 'policy'],
+    answer:
+      `${MENTORSHIP.program}, CNCF ${MENTORSHIP.term} (${MENTORSHIP.period}).\n\n` +
+      `${MENTORSHIP.project}\n\n${MENTORSHIP.summary}\n\nScope:\n` +
+      MENTORSHIP.deliverables.map((d) => `   ${d}`).join('\n'),
+    open: 'opensource',
+  },
   {
     keys: ['who', 'about', 'yourself', 'introduce', 'bio', 'athang'],
-    answer: `${HERO.first} ${HERO.last}\n${HERO.roles.join(' · ')}\n\n${ABOUT.intro}`,
+    answer: `${HERO.first} ${HERO.last}\n${HERO.roles.join(' · ')}\n\n${d.aboutIntro}`,
     open: 'about',
   },
   {
@@ -33,15 +43,15 @@ const KB: Entry[] = [
   {
     keys: ['open source', 'oss', 'kubernetes', 'contribut', 'pr', 'pull request', 'headlamp', 'kubearmor', 'cncf'],
     answer:
-      `${TOTAL_MERGED} merged pull requests across CNCF projects, with ${TOTAL_OPEN} more in review:\n\n` +
-      OSS.map((o) => `${o.repo}\n   ${o.merged} merged, ${o.open} in review (${o.tag})`).join('\n\n') +
+      `${d.totalMerged} merged pull requests across CNCF projects, with ${d.totalOpen} more in review:\n\n` +
+      d.oss.map((o: SiteData['oss'][number]) => `${o.repo}\n   ${o.merged} merged, ${o.open} in review (${o.tag})`).join('\n\n') +
       `\n\nThe CNCF contributor card counts ${CNCF_CARD.contributions} contributions across ${CNCF_CARD.repoCount} repositories.`,
     open: 'opensource',
   },
   {
     keys: ['experience', 'intern', 'job', 'career', 'worked', 'company', 'aeons'],
     answer:
-      EXPERIENCE_LIST.map((e) => `${e.role} @ ${e.org}\n${e.period} · ${e.mode}\n${e.bullets[0]}`).join('\n\n'),
+      d.experience.map((e: SiteData['experience'][number]) => `${e.role} @ ${e.org}\n${e.period} · ${e.mode}\n${e.bullets[0]}`).join('\n\n'),
     open: 'experience',
   },
   {
@@ -69,7 +79,7 @@ const KB: Entry[] = [
   {
     keys: ['leetcode', 'dsa', 'algorithm', 'competitive', 'problem'],
     answer:
-      `LeetCode: ${LEETCODE.rating} contest rating, ${LEETCODE.solved} problems solved across ${LEETCODE.contests} contests, currently in the top ${LEETCODE.topPercentage}% of users.\n\nBreakdown: ${LEETCODE.easy} easy, ${LEETCODE.medium} medium, ${LEETCODE.hard} hard.`,
+      `LeetCode: ${d.leetcode.rating} contest rating, ${d.leetcode.solved} problems solved across ${d.leetcode.contests} contests, currently in the top ${d.leetcode.topPercentage}% of users.\n\nBreakdown: ${d.leetcode.easy} easy, ${d.leetcode.medium} medium, ${d.leetcode.hard} hard.`,
     open: 'skills',
   },
   {
@@ -85,7 +95,7 @@ const KB: Entry[] = [
   {
     keys: ['theme', 'color', 'dark', 'look'],
     answer:
-      'Six themes ship with this site: Athang Dark, Tokyo Night, Catppuccin, Nord, Gruvbox and Dracula.\n\nClick the theme name in the status bar, or press Ctrl+K and search for "theme".',
+      'Nine themes ship with this site.\n\nDark: Athang Dark, Tokyo Night, Catppuccin, Nord, Gruvbox, Dracula.\nLight: Athang Light, GitHub Light, Solarized Light.\n\nThe first visit follows your system preference. Click the theme name in the status bar, or press Ctrl+K and search for "theme".',
   },
   {
     keys: ['terminal', 'command', 'shell', 'cli'],
@@ -99,10 +109,12 @@ const KB: Entry[] = [
       LINKS[0].value,
     open: 'contact',
   },
-]
+  ]
+}
 
 const SUGGESTIONS = [
   'Who is Athang?',
+  'Tell me about the LFX mentorship',
   'What has he built?',
   'Tell me about the open source work',
   'What has he published?',
@@ -112,10 +124,10 @@ const SUGGESTIONS = [
 
 interface Msg { role: 'user' | 'bot'; text: string }
 
-function answerFor(q: string): Entry | null {
+function answerFor(kb: Entry[], q: string): Entry | null {
   const s = q.toLowerCase()
   let best: { e: Entry; score: number } | null = null
-  for (const e of KB) {
+  for (const e of kb) {
     const score = e.keys.reduce((n, k) => (s.includes(k) ? n + k.length : n), 0)
     if (score > 0 && (!best || score > best.score)) best = { e, score }
   }
@@ -123,6 +135,8 @@ function answerFor(q: string): Entry | null {
 }
 
 export function Assistant({ onClose, onOpen }: { onClose: () => void; onOpen: (id: FileId) => void }) {
+  const d = useSiteData()
+  const kb = useMemo(() => buildKb(d), [d])
   const [msgs, setMsgs] = useState<Msg[]>([])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
@@ -139,7 +153,7 @@ export function Assistant({ onClose, onOpen }: { onClose: () => void; onOpen: (i
     setTyping(true)
 
     setTimeout(() => {
-      const hit = answerFor(q)
+      const hit = answerFor(kb, q)
       const text =
         hit?.answer ??
         "I only know what is on this site. Try asking about his projects, open source work, skills, experience, publications, education, or how to get in touch."
@@ -154,7 +168,7 @@ export function Assistant({ onClose, onOpen }: { onClose: () => void; onOpen: (i
       <div className="flex shrink-0 items-center gap-2 border-b border-line px-3 py-2">
         <span className="text-accent"><SparkIcon size={15} /></span>
         <span className="text-[12px] text-bright">Ask about Athang</span>
-        <button onClick={onClose} aria-label="Close assistant" className="ml-auto rounded p-1 text-dim transition hover:bg-white/10 hover:text-text">
+        <button onClick={onClose} aria-label="Close assistant" className="ml-auto rounded p-1 text-dim transition hover:bg-active hover:text-text">
           <CloseIcon />
         </button>
       </div>
@@ -188,7 +202,7 @@ export function Assistant({ onClose, onOpen }: { onClose: () => void; onOpen: (i
           <div key={i} className={`anim-rise mb-3 ${m.role === 'user' ? 'text-right' : ''}`}>
             <div
               className={`inline-block max-w-[92%] whitespace-pre-wrap rounded-lg px-3 py-2 text-left text-[12px] leading-relaxed ${
-                m.role === 'user' ? 'bg-accent text-white' : 'border border-line bg-bg text-text'
+                m.role === 'user' ? 'bg-accent text-on-accent' : 'border border-line bg-bg text-text'
               }`}
             >
               {m.text}
@@ -217,12 +231,12 @@ export function Assistant({ onClose, onOpen }: { onClose: () => void; onOpen: (i
             onKeyDown={(e) => e.key === 'Enter' && ask(input)}
             placeholder="Ask about projects, skills, OSS…"
             aria-label="Ask the assistant"
-            className="flex-1 rounded border border-line bg-bg px-2.5 py-1.5 text-[12px] text-text outline-none transition placeholder:text-dim/70 focus:border-accent"
+            className="flex-1 rounded border border-line bg-bg px-2.5 py-1.5 text-[12px] text-text outline-none transition placeholder:text-dim focus:border-accent"
           />
           <button
             onClick={() => ask(input)}
             aria-label="Send"
-            className="rounded bg-accent px-3 text-[12px] text-white transition hover:brightness-110"
+            className="rounded bg-accent px-3 text-[12px] text-on-accent transition hover:brightness-110"
           >
             ↑
           </button>
