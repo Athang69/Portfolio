@@ -43,7 +43,7 @@ export const FILES: EditorFile[] = [
   { id: 'readme', name: 'README.md', folder: 'root', lang: 'Markdown', icon: 'md' },
 ]
 
-export const RESUME = { name: 'Athang_Kali_Resume.pdf', href: '/Athang_Kali_Resume.pdf' }
+export const RESUME = { name: 'AthangKaliResume.pdf', href: '/AthangKaliResume.pdf' }
 
 /* ------------------------------------------------------------ live data */
 
