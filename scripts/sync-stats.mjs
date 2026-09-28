@@ -18,7 +18,7 @@ const OUT = join(ROOT, 'lib', 'live-stats.json')
 
 const LEETCODE_USER = 'AthangOP'
 const GITHUB_USER = 'Athang69'
-const REPOS = ['kubernetes-sigs/headlamp', 'kubearmor/KubeArmor', 'vfarcic/dot-ai-headlamp']
+const REPOS = ['kubernetes-sigs/headlamp', 'headlamp-k8s/plugins', 'kubearmor/KubeArmor']
 
 const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36'
 
@@ -100,14 +100,18 @@ async function fetchRepo(repo) {
   const open = await ghSearch(`repo:${repo} author:${GITHUB_USER} is:pr is:open`)
   await sleep(2500)
 
-  const prs = merged.items
-    .map((p) => ({
-      number: p.number,
-      title: p.title,
-      url: p.html_url,
-      mergedAt: p.pull_request?.merged_at?.slice(0, 10) ?? null,
-    }))
-    .sort((a, b) => b.number - a.number)
+  const shape = (p) => ({
+    number: p.number,
+    title: p.title,
+    url: p.html_url,
+    mergedAt: p.pull_request?.merged_at?.slice(0, 10) ?? null,
+  })
+  const byNewest = (a, b) => b.number - a.number
+
+  const prs = merged.items.map(shape).sort(byNewest)
+  // Open pull requests matter on their own: the Kyverno plugin work for the
+  // LFX mentorship is all still in review.
+  const openPrs = open.items.map(shape).sort(byNewest)
 
   return {
     repo,
@@ -116,6 +120,7 @@ async function fetchRepo(repo) {
     firstMerged: prs.reduce((m, p) => (p.mergedAt && (!m || p.mergedAt < m) ? p.mergedAt : m), null),
     lastMerged: prs.reduce((m, p) => (p.mergedAt && (!m || p.mergedAt > m) ? p.mergedAt : m), null),
     prs,
+    openPrs,
   }
 }
 

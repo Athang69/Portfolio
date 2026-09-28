@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { FILES, RESUME, type FileId } from '@/lib/ide-data'
+import { FILES, RESUME, type FileId, type TabId } from '@/lib/ide-data'
 import {
   ActivityBar, Breadcrumb, MenuBar, StatusBar, TabBar, ThemePicker, TitleBar,
   preferredTheme, type PanelId, type ThemeId,
@@ -45,8 +45,8 @@ function EmptyEditor({ onOpen, onShortcuts }: { onOpen: (id: FileId) => void; on
 }
 
 export default function Page() {
-  const [openIds, setOpenIds] = useState<FileId[]>(['home'])
-  const [active, setActive] = useState<FileId>('home')
+  const [openIds, setOpenIds] = useState<TabId[]>(['home'])
+  const [active, setActive] = useState<TabId>('home')
   const [panel, setPanel] = useState<PanelId>('explorer')
   const [sidebar, setSidebar] = useState(true)
   const [terminal, setTerminal] = useState(false)
@@ -76,14 +76,14 @@ export default function Page() {
 
   /* ------------------------------------------------------- tab actions */
 
-  const openFile = useCallback((id: FileId) => {
+  const openFile = useCallback((id: TabId) => {
     setOpenIds((ids) => (ids.includes(id) ? ids : [...ids, id]))
     setActive(id)
     // on small screens the sidebar overlays the editor, so get out of the way
     if (window.innerWidth <= 860) setSidebar(false)
   }, [])
 
-  const closeFile = useCallback((id: FileId) => {
+  const closeFile = useCallback((id: TabId) => {
     setOpenIds((ids) => {
       const next = ids.filter((x) => x !== id)
       setActive((cur) => (cur === id ? next[Math.max(0, ids.indexOf(id) - 1)] ?? cur : cur))

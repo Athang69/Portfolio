@@ -89,6 +89,29 @@ drop `NEXT_PUBLIC_WEB3FORMS_KEY`. Formspree works unchanged:
 NEXT_PUBLIC_CONTACT_ENDPOINT=https://formspree.io/f/<form-id>
 ```
 
+## Diff viewer
+
+Any pull request in `opensource.go` opens as an editor tab showing its real
+diff: `headlamp-5120.diff`, with the same tab, breadcrumb and status bar as a
+source file.
+
+`app/api/diff/route.ts` fetches the patch from GitHub and parses it into hunks
+on the server, so the browser only lays it out. Two things worth knowing:
+
+- **The repo is checked against an allowlist** built from `live-stats.json`.
+  Without that, the route would be an open proxy for arbitrary GitHub content.
+- **Merged diffs never change**, so the upstream calls are cached for a week
+  and the client keeps a per-session map. Opening the same diff twice costs one
+  fetch.
+
+Tabs carry a `TabId`, which is either a `FileId` or a `diff:<repo>#<number>`
+string. `tabMeta()` resolves either to a name, icon and language, so the tab
+bar, breadcrumb and status bar need no special cases.
+
+Each repo also lists three **featured diffs**, curated in `REPO_META` by what
+the diff actually shows rather than by recency, each with a line explaining why
+it is worth reading.
+
 ## Social card
 
 `app/opengraph-image.tsx` and `app/twitter-image.tsx` both render

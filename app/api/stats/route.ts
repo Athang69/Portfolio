@@ -112,14 +112,17 @@ async function fetchRepo(repo: string): Promise<Repo | null> {
       ghSearch(`repo:${repo} author:${GITHUB_USER} is:pr is:open`),
     ])
 
-    const prs = merged.items
-      .map((p: { number: number; title: string; html_url: string; pull_request?: { merged_at?: string } }) => ({
-        number: p.number,
-        title: p.title,
-        url: p.html_url,
-        mergedAt: p.pull_request?.merged_at?.slice(0, 10) ?? null,
-      }))
-      .sort((a: { number: number }, b: { number: number }) => b.number - a.number)
+    type Raw = { number: number; title: string; html_url: string; pull_request?: { merged_at?: string } }
+    const shape = (p: Raw) => ({
+      number: p.number,
+      title: p.title,
+      url: p.html_url,
+      mergedAt: p.pull_request?.merged_at?.slice(0, 10) ?? null,
+    })
+    const byNewest = (a: { number: number }, b: { number: number }) => b.number - a.number
+
+    const prs = merged.items.map(shape).sort(byNewest)
+    const openPrs = open.items.map(shape).sort(byNewest)
 
     const dates = prs.map((p: { mergedAt: string | null }) => p.mergedAt).filter(Boolean) as string[]
 
@@ -130,6 +133,7 @@ async function fetchRepo(repo: string): Promise<Repo | null> {
       firstMerged: dates.length ? dates.reduce((a, b) => (a < b ? a : b)) : null,
       lastMerged: dates.length ? dates.reduce((a, b) => (a > b ? a : b)) : null,
       prs,
+      openPrs,
     }
   } catch {
     return null

@@ -11,6 +11,80 @@ import { CloseIcon } from './icons'
 
 type Line = { text: string; tone?: 'dim' | 'green' | 'blue' | 'yellow' | 'red' | 'purple' }
 
+/* ------------------------------------------------------------- resizing */
+
+const HEIGHT_KEY = 'athang-portfolio-terminal-height'
+const MIN_PANEL = 120
+/** Never let the panel swallow the editor entirely. */
+const MIN_EDITOR = 140
+const DEFAULT_RATIO = 0.38
+
+const clamp = (h: number, available: number) =>
+  Math.round(Math.min(Math.max(h, MIN_PANEL), Math.max(MIN_PANEL, available - MIN_EDITOR)))
+
+/**
+ * Drag the top edge to resize, the way VS Code's panel works. The height is
+ * kept in px and remembered across visits; it is re-clamped whenever the
+ * window changes size so a tall panel cannot strand the editor off screen.
+ */
+function usePanelHeight(rootRef: React.RefObject<HTMLDivElement | null>) {
+  const [height, setHeight] = useState<number | null>(null)
+  const [dragging, setDragging] = useState(false)
+
+  const available = () => rootRef.current?.parentElement?.clientHeight ?? 0
+
+  useEffect(() => {
+    const space = available()
+    if (!space) return
+    const saved = Number(localStorage.getItem(HEIGHT_KEY))
+    setHeight(clamp(saved > 0 ? saved : space * DEFAULT_RATIO, space))
+
+    const onResize = () => setHeight((h) => (h === null ? h : clamp(h, available())))
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const commit = (h: number) => {
+    setHeight(h)
+    try { localStorage.setItem(HEIGHT_KEY, String(h)) } catch { /* private mode */ }
+  }
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return
+    e.preventDefault()
+    const space = available()
+    const startY = e.clientY
+    const startH = rootRef.current?.offsetHeight ?? 0
+    let latest = startH
+    setDragging(true)
+
+    const move = (ev: PointerEvent) => {
+      latest = clamp(startH - (ev.clientY - startY), space)
+      setHeight(latest)
+    }
+    const up = () => {
+      setDragging(false)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      commit(latest)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+  }
+
+  /** Keyboard resizing, so the panel is not mouse only. */
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const step = e.shiftKey ? 48 : 16
+    if (e.key === 'ArrowUp') { e.preventDefault(); commit(clamp((height ?? 0) + step, available())) }
+    if (e.key === 'ArrowDown') { e.preventDefault(); commit(clamp((height ?? 0) - step, available())) }
+  }
+
+  const reset = () => commit(clamp(available() * DEFAULT_RATIO, available()))
+
+  return { height, dragging, onPointerDown, onKeyDown, reset }
+}
+
 const TONE: Record<string, string> = {
   dim: 'text-dim',
   green: 'text-green',
@@ -29,6 +103,8 @@ const BANNER = [
 ]
 
 export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id: FileId) => void }) {
+  const rootRef = useRef<HTMLDivElement>(null)
+  const panel = usePanelHeight(rootRef)
   const [lines, setLines] = useState<Line[]>([
     { text: "Welcome. Type 'help' for the command list.", tone: 'green' },
   ])
@@ -241,7 +317,28 @@ export function Terminal({ onClose, onOpen }: { onClose: () => void; onOpen: (id
   }
 
   return (
-    <div className="flex h-[38%] min-h-[180px] shrink-0 flex-col border-t border-line bg-bg" onClick={() => inputRef.current?.focus()}>
+    <div
+      ref={rootRef}
+      style={panel.height === null ? undefined : { height: panel.height }}
+      className={`relative flex shrink-0 flex-col border-t border-line bg-bg ${
+        panel.height === null ? 'h-[38%] min-h-[180px]' : ''
+      }`}
+      onClick={() => inputRef.current?.focus()}
+    >
+      <div
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label="Resize terminal panel"
+        tabIndex={0}
+        onPointerDown={panel.onPointerDown}
+        onKeyDown={panel.onKeyDown}
+        onDoubleClick={panel.reset}
+        title="Drag to resize. Double click to reset."
+        className={`absolute inset-x-0 -top-1 z-10 h-2 cursor-ns-resize transition-colors focus:outline-none ${
+          panel.dragging ? 'bg-accent' : 'hover:bg-accent/60 focus-visible:bg-accent/60'
+        }`}
+      />
+
       <div className="flex shrink-0 items-center gap-4 border-b border-line px-3 py-1.5 text-[11px]">
         <span className="border-b border-accent pb-1 text-text">TERMINAL</span>
         <span className="text-dim">PROBLEMS</span>

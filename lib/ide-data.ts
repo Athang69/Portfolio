@@ -45,6 +45,41 @@ export const FILES: EditorFile[] = [
 
 export const RESUME = { name: 'Athang_Kali_Resume.pdf', href: '/Athang_Kali_Resume.pdf' }
 
+/* ------------------------------------------------------------ diff tabs */
+
+/**
+ * A merged pull request opened as an editor tab, for example
+ * "diff:kubernetes-sigs/headlamp#3245". Tabs are either one of the fixed
+ * FILES or one of these, so everything that renders a tab takes a TabId.
+ */
+export type DiffId = `diff:${string}#${number}`
+export type TabId = FileId | DiffId
+
+export const diffId = (repo: string, number: number) => `diff:${repo}#${number}` as DiffId
+export const isDiffId = (id: TabId): id is DiffId => id.startsWith('diff:')
+
+export function parseDiffId(id: DiffId) {
+  const body = id.slice('diff:'.length)
+  const hash = body.lastIndexOf('#')
+  return { repo: body.slice(0, hash), number: Number(body.slice(hash + 1)) }
+}
+
+export interface TabMeta { name: string; folder: string; lang: string; icon: string }
+
+export function tabMeta(id: TabId): TabMeta {
+  if (isDiffId(id)) {
+    const { repo, number } = parseDiffId(id)
+    return {
+      name: `${repo.split('/')[1]}-${number}.diff`,
+      folder: 'pulls',
+      lang: 'Diff',
+      icon: 'diff',
+    }
+  }
+  const f = FILES.find((x) => x.id === id)!
+  return { name: f.name, folder: f.folder, lang: f.lang, icon: f.icon }
+}
+
 /* ------------------------------------------------------------ live data */
 
 /**
@@ -54,6 +89,13 @@ export const RESUME = { name: 'Athang_Kali_Resume.pdf', href: '/Athang_Kali_Resu
  * populated in the current snapshot is still nullable when a source is
  * unreachable, and the inferred type would not say so.
  */
+export interface PullRequest {
+  number: number
+  title: string
+  url: string
+  mergedAt: string | null
+}
+
 export interface LiveStats {
   generatedAt: string
   leetcode: {
@@ -75,7 +117,8 @@ export interface LiveStats {
     open: number
     firstMerged: string | null
     lastMerged: string | null
-    prs: { number: number; title: string; url: string; mergedAt: string | null }[]
+    prs: PullRequest[]
+    openPrs: PullRequest[]
   }[]
   totalMerged: number
   totalOpen: number
@@ -87,6 +130,9 @@ export const BAKED: LiveStats = live
 export const LEETCODE = live.leetcode
 export const TOTAL_MERGED = live.totalMerged
 export const TOTAL_OPEN = live.totalOpen
+
+/** Totals as shown on the official CNCF contributor card. */
+const CNCF_CONTRIBUTIONS = 106
 
 /* ---------------------------------------------------------- mentorship */
 
@@ -234,7 +280,16 @@ export const PROJECT_LIST: Project[] = [
 /* ---------------------------------------------------------- open source */
 
 /** Curated narrative per repo. PR lists and counts come from live-stats.json. */
-const REPO_META: Record<string, { tag: string; blurb: string; wins: string[]; order: number }> = {
+interface RepoMeta {
+  tag: string
+  blurb: string
+  wins: string[]
+  order: number
+  /** Chosen for what the diff shows, not for recency. Rendered as openable diffs. */
+  featured: { number: number; note: string }[]
+}
+
+const REPO_META: Record<string, RepoMeta> = {
   'kubernetes-sigs/headlamp': {
     order: 0,
     tag: 'CNCF Kubernetes Dashboard',
@@ -248,9 +303,26 @@ const REPO_META: Record<string, { tag: string; blurb: string; wins: string[]; or
       'Hardened isValidRedirectPath against whitespace and URL encoded protocol bypass.',
       'Added cosign keyless signing for release checksums.',
     ],
+    featured: [
+      { number: 5120, note: 'Feature. Authenticated Helm repositories, which unlocked private registry workflows.' },
+      { number: 6188, note: 'Security. The portforward handler was exposing userID suffixes in its responses.' },
+      { number: 6076, note: 'Architecture. Relocating cluster hooks to break a circular import that blocked static analysis.' },
+    ],
+  },
+  'headlamp-k8s/plugins': {
+    order: 1,
+    tag: 'CNCF Plugin Ecosystem',
+    blurb:
+      'The official Headlamp plugins repository, and where my LFX mentorship work lands. The Kyverno plugin is the focus: turning a read only dashboard into something an operator can actually troubleshoot with.',
+    wins: [],
+    featured: [
+      { number: 1294, note: 'The policy impact aggregation module, with unit tests, behind the Policy Impact Map.' },
+      { number: 1310, note: 'Prometheus backed health metrics for the Kyverno policy engine.' },
+      { number: 1306, note: 'List and detail views for the Kyverno v2 CEL based policy kinds.' },
+    ],
   },
   'kubearmor/KubeArmor': {
-    order: 1,
+    order: 2,
     tag: 'CNCF Runtime Security',
     blurb:
       'KubeArmor is a runtime security engine for Kubernetes. I work on correctness in the enforcement and container lifecycle paths, and on hardening the project supply chain.',
@@ -261,12 +333,11 @@ const REPO_META: Record<string, { tag: string; blurb: string; wins: string[]; or
       'Added unit tests for the main package and stabilised intermittent blockposture CI failures.',
       'Added openEuler 24.03 LTS-SP3 to the supported platform matrix.',
     ],
-  },
-  'vfarcic/dot-ai-headlamp': {
-    order: 2,
-    tag: 'AI and Kubernetes',
-    blurb: 'Improvements to the AI enhanced Headlamp plugin ecosystem.',
-    wins: [],
+    featured: [
+      { number: 2527, note: 'Runtime bug. containerd exit events were being unmarshalled through the wrong type.' },
+      { number: 2585, note: 'Supply chain. Renovate and pinned dependencies, taking the OpenSSF Scorecard from 0/10 to 6/10.' },
+      { number: 2559, note: 'Coverage. Unit tests for the main package, which had none.' },
+    ],
   },
 }
 
@@ -279,16 +350,20 @@ export interface OssRepo {
   open: number
   firstMerged: string | null
   lastMerged: string | null
+  featured: { number: number; note: string }[]
   allPrs: string
-  prs: { number: number; title: string; url: string; mergedAt: string | null }[]
+  openPrsUrl: string
+  prs: PullRequest[]
+  openPrs: PullRequest[]
 }
 
 function ossRepos(s: LiveStats): OssRepo[] {
   return s.oss
     .map((o) => ({
       ...o,
-      ...(REPO_META[o.repo] ?? { tag: 'Open Source', blurb: '', wins: [], order: 99 }),
-      allPrs: `https://github.com/${o.repo}/pulls?q=is%3Apr+author%3AAthang69`,
+      ...(REPO_META[o.repo] ?? { tag: 'Open Source', blurb: '', wins: [], order: 99, featured: [] }),
+        allPrs: `https://github.com/${o.repo}/pulls?q=is%3Apr+author%3AAthang69`,
+      openPrsUrl: `https://github.com/${o.repo}/pulls?q=is%3Apr+state%3Aopen+author%3AAthang69`,
     }))
     .sort((a, b) => a.order - b.order)
 }
@@ -300,12 +375,13 @@ export const OSS: OssRepo[] = ossRepos(live)
 /** Mirrors the official CNCF contributor card for Athang69. */
 export const CNCF_CARD = {
   handle: 'Athang69',
-  contributions: 104,
+  avatar: 'https://github.com/Athang69.png?size=160',
+  contributions: CNCF_CONTRIBUTIONS,
   repoCount: 3,
   repos: ['headlamp', 'KubeArmor', 'plugins'],
   counts: [
     { label: 'commits', value: 36 },
-    { label: 'pull requests', value: 55 },
+    { label: 'pull requests', value: 57 },
     { label: 'issues', value: 13 },
   ],
   years: ['2026'],
@@ -392,10 +468,10 @@ export const EXPERIENCE_LIST: ExperienceEntry[] = experienceList(live)
 
 export const PUBLICATIONS = [
   {
-    key: 'kali2026collaborative',
+    key: 'kali2025collaborative',
     title: 'Design and Development of a Collaborative Learning System for Interactive Two-Way Education',
     venue: 'IJEDR, International Journal of Engineering Development and Research',
-    detail: 'Volume 13, Issue 4, November 2026, pages 198 to 201',
+    detail: 'Volume 13, Issue 4, November 2025, pages 198 to 201',
     issn: 'ISSN 2321-9939',
     url: 'https://rjwave.org/ijedr/viewpaperforall.php?paper=IJEDR2504276',
   },
@@ -476,7 +552,7 @@ export const LINKS = [
 function heroStats(s: LiveStats) {
   return [
     { value: String(s.totalMerged), label: 'PRs merged' },
-    { value: '104', label: 'CNCF contributions' },
+    { value: String(CNCF_CONTRIBUTIONS), label: 'CNCF contributions' },
     { value: String(s.leetcode.solved), label: 'problems solved' },
     { value: String(s.leetcode.rating), label: 'LeetCode rating' },
   ]

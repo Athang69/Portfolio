@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-09-04T09:30:01.631Z",
+  "generatedAt": "2026-09-28T09:03:45.930Z",
   "leetcode": {
     "username": "AthangOP",
-    "solved": 591,
-    "easy": 224,
-    "medium": 311,
-    "hard": 56,
-    "ranking": 145519,
-    "rating": 1687,
-    "globalRanking": 129830,
-    "totalParticipants": 881221,
-    "topPercentage": 14.99,
-    "contests": 43
+    "solved": 610,
+    "easy": 234,
+    "medium": 319,
+    "hard": 57,
+    "ranking": 137797,
+    "rating": 1701,
+    "globalRanking": 121429,
+    "totalParticipants": 884439,
+    "topPercentage": 13.97,
+    "contests": 46
   },
   "oss": [
     {
@@ -147,6 +147,90 @@
           "url": "https://github.com/kubernetes-sigs/headlamp/pull/5060",
           "mergedAt": "2026-04-07"
         }
+      ],
+      "openPrs": [
+        {
+          "number": 7394,
+          "title": "frontend: NamespacesAutocomplete: Fix tooltip listing already-visible namespaces as hidden",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/7394",
+          "mergedAt": null
+        },
+        {
+          "number": 6441,
+          "title": "backend: deps: Bump golang.org/x/crypto, oras-go, and Go toolchain to fix Scorecard vulnerabilities",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6441",
+          "mergedAt": null
+        },
+        {
+          "number": 6430,
+          "title": "frontend: common: Add ReadyStatusLabel component",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6430",
+          "mergedAt": null
+        },
+        {
+          "number": 6186,
+          "title": "ci: codeql: Add SAST workflow for Go and TypeScript",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/6186",
+          "mergedAt": null
+        },
+        {
+          "number": 5917,
+          "title": "frontend: home: Fix missing key on ErrorBoundary and untranslated strings in cluster components",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5917",
+          "mergedAt": null
+        },
+        {
+          "number": 5882,
+          "title": "docs: rework oidc.md into a focused configuration reference (#5816)",
+          "url": "https://github.com/kubernetes-sigs/headlamp/pull/5882",
+          "mergedAt": null
+        }
+      ]
+    },
+    {
+      "repo": "headlamp-k8s/plugins",
+      "merged": 0,
+      "open": 6,
+      "firstMerged": null,
+      "lastMerged": null,
+      "prs": [],
+      "openPrs": [
+        {
+          "number": 1310,
+          "title": "kyverno: Add Prometheus-backed policy engine health metrics",
+          "url": "https://github.com/headlamp-k8s/plugins/pull/1310",
+          "mergedAt": null
+        },
+        {
+          "number": 1306,
+          "title": "kyverno: Add list and detail views for namespaced CEL policy kinds",
+          "url": "https://github.com/headlamp-k8s/plugins/pull/1306",
+          "mergedAt": null
+        },
+        {
+          "number": 1294,
+          "title": "kyverno: resources: Add policy impact aggregation module with unit tests",
+          "url": "https://github.com/headlamp-k8s/plugins/pull/1294",
+          "mergedAt": null
+        },
+        {
+          "number": 1281,
+          "title": "kyverno: i18n: Fix broken interpolation and stale column caching",
+          "url": "https://github.com/headlamp-k8s/plugins/pull/1281",
+          "mergedAt": null
+        },
+        {
+          "number": 1084,
+          "title": "kyverno: reports: Remove pages for nonexistent CRDs",
+          "url": "https://github.com/headlamp-k8s/plugins/pull/1084",
+          "mergedAt": null
+        },
+        {
+          "number": 909,
+          "title": "prometheus: Settings: Fix connection test crash on plain-text response",
+          "url": "https://github.com/headlamp-k8s/plugins/pull/909",
+          "mergedAt": null
+        }
       ]
     },
     {
@@ -216,24 +300,65 @@
           "url": "https://github.com/kubearmor/KubeArmor/pull/2513",
           "mergedAt": "2026-04-06"
         }
-      ]
-    },
-    {
-      "repo": "vfarcic/dot-ai-headlamp",
-      "merged": 1,
-      "open": 0,
-      "firstMerged": "2026-04-14",
-      "lastMerged": "2026-04-14",
-      "prs": [
+      ],
+      "openPrs": [
         {
-          "number": 2,
-          "title": "fix: replace Function cast in API client and remove stray timeout from recommend body",
-          "url": "https://github.com/vfarcic/dot-ai-headlamp/pull/2",
-          "mergedAt": "2026-04-14"
+          "number": 2773,
+          "title": "fix(controller): run scratch-based controller image as non-root UID 1000",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2773",
+          "mergedAt": null
+        },
+        {
+          "number": 2718,
+          "title": "fix(core): enforce policies on host containers running alongside k8s",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2718",
+          "mergedAt": null
+        },
+        {
+          "number": 2543,
+          "title": "fix(operator): return error on non-200 metadata response and fix log format verbs",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2543",
+          "mergedAt": null
+        },
+        {
+          "number": 2539,
+          "title": "fix(operator): persist CA certificate in k8s secret during TLS rotation",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2539",
+          "mergedAt": null
+        },
+        {
+          "number": 2538,
+          "title": "test(feeder): expand feeder unit test coverage",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2538",
+          "mergedAt": null
+        },
+        {
+          "number": 2534,
+          "title": "fix(monitor): improve SystemMonitor teardown and goroutine lifecycle handling",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2534",
+          "mergedAt": null
+        },
+        {
+          "number": 2531,
+          "title": "fix(operator): create kubearmor namespace before operator resources",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2531",
+          "mergedAt": null
+        },
+        {
+          "number": 2530,
+          "title": "test(runtime): increase unit test coverage from 74% to 86%",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2530",
+          "mergedAt": null
+        },
+        {
+          "number": 2523,
+          "title": "fix(enforcer): correct key deletion in RemoveDeletedEntriesForNodeSelector",
+          "url": "https://github.com/kubearmor/KubeArmor/pull/2523",
+          "mergedAt": null
         }
       ]
     }
   ],
-  "totalMerged": 32,
-  "totalOpen": 15
+  "totalMerged": 31,
+  "totalOpen": 21
 }

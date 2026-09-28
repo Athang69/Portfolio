@@ -63,6 +63,14 @@ export function FileIcon({ kind, size = 15 }: { kind: string; size?: number }) {
           <path d="M4 5.4h4.4M4 8h8M4 10.6h6" stroke="#a78bfa" strokeWidth="1.1" strokeLinecap="round" />
         </svg>
       )
+    case 'diff':
+      return (
+        <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M4 3h5l3 3v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.1" className="text-dim" />
+          <path d="M5.4 8.4h2.2M6.5 7.3v2.2" stroke="#3fb950" strokeWidth="1.2" strokeLinecap="round" />
+          <path d="M8.9 11.1h2.2" stroke="#f85149" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      )
     case 'pdf':
       return (
         <svg {...box(size)} aria-hidden>

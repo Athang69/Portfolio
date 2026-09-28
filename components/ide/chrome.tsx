@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { FILES, RESUME, WORKSPACE, type FileId } from '@/lib/ide-data'
+import { FILES, RESUME, WORKSPACE, tabMeta, type TabId } from '@/lib/ide-data'
 import {
   ChevronIcon, CloseIcon, ExplorerIcon, ExtensionsIcon, FileIcon, GearIcon,
   GitIcon, RunIcon, SearchIcon, SparkIcon,
@@ -55,21 +55,28 @@ export function TitleBar({ onPalette }: { onPalette: () => void }) {
 
   return (
     <div className="area-title flex select-none items-center gap-2 border-b border-black/60 bg-title px-3">
-      <div className="group flex gap-[7px]">
+      {/* 12px dots in 26px hit areas, clearing the 24px WCAG target-size
+          minimum. Sizes are explicit px: the root font-size here is 13px, so
+          Tailwind's rem-based h-6 would render 19.5px, not 24px. */}
+      <div className="group -ml-[7px] flex">
         {dots.map((d) => (
           <button
             key={d.t}
             onClick={d.fn}
             title={d.t}
             aria-label={d.t}
-            className="relative h-3 w-3 rounded-full transition hover:brightness-110"
-            style={{ background: d.c }}
+            className="flex h-[26px] w-[26px] items-center justify-center"
           >
             <span
-              className="absolute inset-0 flex items-center justify-center text-[8px] font-bold opacity-0 transition-opacity group-hover:opacity-100"
-              style={{ color: d.gc }}
+              className="relative h-3 w-3 rounded-full transition hover:brightness-110"
+              style={{ background: d.c }}
             >
-              {d.g}
+              <span
+                className="absolute inset-0 flex items-center justify-center text-[8px] font-bold opacity-0 transition-opacity group-hover:opacity-100"
+                style={{ color: d.gc }}
+              >
+                {d.g}
+              </span>
             </span>
           </button>
         ))}
@@ -204,7 +211,7 @@ export function ActivityBar({
             key={id}
             onClick={() => onPanel(id)}
             title={label}
-            aria-label={label}
+            aria-label={badge ? `${label}, ${badge}` : label}
             className={`relative flex h-11 w-11 items-center justify-center rounded-md transition ${on ? 'abar-on text-bright' : 'text-dim hover:text-text'}`}
           >
             <Icon />
@@ -234,15 +241,15 @@ export function ActivityBar({
 export function TabBar({
   openIds, active, onSelect, onClose,
 }: {
-  openIds: FileId[]
-  active: FileId
-  onSelect: (id: FileId) => void
-  onClose: (id: FileId) => void
+  openIds: TabId[]
+  active: TabId
+  onSelect: (id: TabId) => void
+  onClose: (id: TabId) => void
 }) {
   return (
     <div className="no-scroll flex h-[35px] shrink-0 overflow-x-auto border-b border-line bg-bg2">
       {openIds.map((id) => {
-        const f = FILES.find((x) => x.id === id)!
+        const f = tabMeta(id)
         const on = id === active
         return (
           <div
@@ -274,8 +281,8 @@ export function TabBar({
 
 /* =========================================================== breadcrumb */
 
-export function Breadcrumb({ id }: { id: FileId }) {
-  const f = FILES.find((x) => x.id === id)!
+export function Breadcrumb({ id }: { id: TabId }) {
+  const f = tabMeta(id)
   const crumbs = f.folder === 'root' ? [WORKSPACE, f.name] : [WORKSPACE, f.folder, f.name]
   return (
     <div className="flex h-[26px] shrink-0 items-center gap-1.5 border-b border-line bg-bg px-4 text-[11px] text-dim">
@@ -294,7 +301,7 @@ export function Breadcrumb({ id }: { id: FileId }) {
 export function StatusBar({
   file, themeId, onTheme, onTerminal, onAssistant,
 }: {
-  file: FileId
+  file: TabId
   themeId: ThemeId
   onTheme: () => void
   onTerminal: () => void
@@ -309,7 +316,7 @@ export function StatusBar({
     return () => clearInterval(t)
   }, [])
 
-  const lang = FILES.find((f) => f.id === file)!.lang
+  const lang = tabMeta(file).lang
   const theme = THEMES.find((t) => t.id === themeId)!
   const cell = 'flex items-center gap-1.5 px-2 h-full transition hover:bg-strong'
 

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { useSiteData } from '@/lib/use-site-data'
 import {
   FILES, RESUME, WORKSPACE, PROJECT_LIST, SKILL_GROUPS, PUBLICATIONS,
-  type FileId, type SiteData,
+  type FileId, type SiteData, type TabId,
 } from '@/lib/ide-data'
 import { ChevronIcon, FileIcon, GitIcon, SparkIcon } from './icons'
 import type { PanelId } from './chrome'
@@ -19,7 +19,7 @@ const FOLDERS: { key: 'src' | 'data'; label: string }[] = [
 function Explorer({
   active, onOpen, onAssistant,
 }: {
-  active: FileId | null
+  active: TabId | null
   onOpen: (id: FileId) => void
   onAssistant: () => void
 }) {
@@ -270,7 +270,7 @@ export function Sidebar({
   panel, active, onOpen, onAssistant,
 }: {
   panel: PanelId
-  active: FileId | null
+  active: TabId | null
   onOpen: (id: FileId) => void
   onAssistant: () => void
 }) {

@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useSiteData } from '@/lib/use-site-data'
+import { DiffPane } from './diff'
 import {
   ABOUT, ALSO_KNOWN, CNCF_CARD, HERO, LINKS, MENTORSHIP, PROJECT_LIST, PUBLICATIONS,
-  RESUME, SKILL_GROUPS,
-  type FileId,
+  RESUME, SKILL_GROUPS, diffId, isDiffId,
+  type FileId, type PullRequest, type TabId,
 } from '@/lib/ide-data'
 import { ExternalIcon } from './icons'
 import { Minimap } from './minimap'
@@ -167,9 +168,9 @@ function MentorshipCard({ full = false }: { full?: boolean }) {
       </div>
 
       <div className="px-6 py-7">
-        <h3 className="display text-[clamp(1.2rem,2.6vw,1.6rem)] leading-[1.35] text-bright">
+        <h2 className="display text-[clamp(1.2rem,2.6vw,1.6rem)] leading-[1.35] text-bright">
           {m.project}
-        </h3>
+        </h2>
 
         <p className="mt-3 text-[12px] text-dim">
           {m.org}
@@ -251,7 +252,9 @@ export function HomePane({ onOpen }: { onOpen: (id: FileId) => void }) {
         ))}
       </p>
 
-      <p className="mt-10 text-[13.5px] text-text">
+      {/* Height is reserved so the typed phrase rewrapping cannot push the
+          summary below it, which was the one real layout shift on mobile. */}
+      <p className="mt-10 min-h-[40px] text-[13.5px] text-text sm:min-h-0">
         <span className="text-dim">Building </span>
         {typed}
         <span className="caret" />
@@ -413,7 +416,18 @@ function CncfCard() {
       </div>
 
       <div className="px-6 py-7">
-        <p className="text-[15px] text-bright">{c.handle}</p>
+        <div className="flex items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={c.avatar}
+            alt=""
+            width={44}
+            height={44}
+            loading="lazy"
+            className="h-11 w-11 rounded-full border border-line object-cover"
+          />
+          <p className="text-[15px] text-bright">{c.handle}</p>
+        </div>
 
         <p className="mt-5 text-[13.5px] leading-relaxed text-text/85">
           <span className="display text-[1.5rem] text-bright">{c.contributions}</span>
@@ -457,9 +471,50 @@ function CncfCard() {
   )
 }
 
+/** One pull request. The title opens its diff in the editor; the icon goes to GitHub. */
+function PrRow({
+  repo, pr, onOpen, showDate = false,
+}: {
+  repo: string
+  pr: PullRequest
+  onOpen: (id: TabId) => void
+  showDate?: boolean
+}) {
+  return (
+    <li className="flex items-baseline gap-4">
+      <button
+        onClick={() => onOpen(diffId(repo, pr.number))}
+        title="Open this diff in the editor"
+        className="group/pr flex min-w-0 flex-1 items-baseline gap-4 text-left"
+      >
+        <span className="w-14 shrink-0 text-[11.5px] tabular-nums text-dim transition group-hover/pr:text-accent">
+          #{pr.number}
+        </span>
+        <span className="flex-1 text-[12.5px] leading-relaxed text-text/85 transition group-hover/pr:text-bright">
+          {pr.title}
+        </span>
+      </button>
+      {showDate && (
+        <span className="hidden w-[76px] shrink-0 text-right text-[11px] tabular-nums text-dim sm:block">
+          {pr.mergedAt}
+        </span>
+      )}
+      <a
+        href={pr.url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`Open pull request ${pr.number} on GitHub`}
+        className="shrink-0 p-1 text-dim transition hover:text-accent"
+      >
+        <ExternalIcon size={10} />
+      </a>
+    </li>
+  )
+}
+
 /* ========================================================= opensource.go */
 
-export function OpenSourcePane() {
+export function OpenSourcePane({ onOpen }: { onOpen: (id: TabId) => void }) {
   const d = useSiteData()
   return (
     <Pane id="opensource" comment="// opensource.go">
@@ -499,37 +554,86 @@ export function OpenSourcePane() {
               </div>
             )}
 
-            <details className="group mt-8 border-t border-line pt-5">
-              <summary className="cursor-pointer list-none text-[12px] text-dim transition hover:text-text">
-                <span className="group-open:hidden">Show all {o.merged} merged pull requests</span>
-                <span className="hidden group-open:inline">Hide pull requests</span>
-              </summary>
-              <ul className="mt-5 space-y-3">
-                {o.prs.map((pr) => (
-                  <li key={pr.number}>
-                    <a href={pr.url} target="_blank" rel="noreferrer" className="group/pr flex gap-4">
-                      <span className="w-14 shrink-0 text-[11.5px] tabular-nums text-dim">#{pr.number}</span>
-                      <span className="flex-1 text-[12.5px] leading-relaxed text-text/85 transition group-hover/pr:text-bright">
-                        {pr.title}
-                      </span>
-                      <span className="hidden w-[76px] shrink-0 text-right text-[11px] tabular-nums text-dim sm:block">
-                        {pr.mergedAt}
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6">
-                <LinkOut href={o.allPrs}>All pull requests on GitHub</LinkOut>
+            {o.featured.length > 0 && (
+              <div className="mt-9">
+                <Label>Featured diffs</Label>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {o.featured.map((f) => {
+                    const pr = [...o.prs, ...o.openPrs].find((x) => x.number === f.number)
+                    if (!pr) return null
+                    return (
+                      <button
+                        key={f.number}
+                        onClick={() => onOpen(diffId(o.repo, f.number))}
+                        title="Open this diff in the editor"
+                        className="group/f flex h-full flex-col border border-line p-4 text-left transition hover:border-accent/50 hover:bg-hover"
+                      >
+                        <span className="flex items-baseline gap-2.5">
+                          <span className="text-[11px] tabular-nums text-accent">#{f.number}</span>
+                          <span className="text-[10px] uppercase tracking-[0.16em] text-dim">
+                            {pr.mergedAt ? 'Merged' : 'In review'}
+                          </span>
+                        </span>
+                        <span className="mt-2.5 text-[12.5px] leading-snug text-text transition group-hover/f:text-bright">
+                          {pr.title}
+                        </span>
+                        <span className="mt-3 text-[11.5px] leading-relaxed text-dim">{f.note}</span>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
-            </details>
+            )}
+
+            {o.openPrs.length > 0 && (
+              <div className="mt-8 border-t border-line pt-6">
+                <p className="mb-5 flex items-center gap-2.5 text-[10.5px] uppercase tracking-[0.2em] text-accent">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  In review · {o.open}
+                </p>
+                <ul className="space-y-3">
+                  {o.openPrs.map((pr) => (
+                    <PrRow key={pr.number} repo={o.repo} pr={pr} onOpen={onOpen} />
+                  ))}
+                </ul>
+                <div className="mt-5">
+                  <LinkOut href={o.openPrsUrl}>Open pull requests on GitHub</LinkOut>
+                </div>
+              </div>
+            )}
+
+            {o.prs.length > 0 && (
+              <div className="mt-8 border-t border-line pt-6">
+                <p className="mb-5 text-[10.5px] uppercase tracking-[0.2em] text-dim">Merged · {o.merged}</p>
+                <ul className="space-y-3">
+                  {o.prs.slice(0, 5).map((pr) => (
+                    <PrRow key={pr.number} repo={o.repo} pr={pr} onOpen={onOpen} showDate />
+                  ))}
+                </ul>
+
+                {o.prs.length > 5 && (
+                  <details className="group mt-5">
+                    <summary className="cursor-pointer list-none text-[12px] text-dim transition hover:text-text">
+                      <span className="group-open:hidden">Show {o.prs.length - 5} more</span>
+                      <span className="hidden group-open:inline">Show fewer</span>
+                    </summary>
+                    <ul className="mt-5 space-y-3">
+                      {o.prs.slice(5).map((pr) => (
+                        <PrRow key={pr.number} repo={o.repo} pr={pr} onOpen={onOpen} showDate />
+                      ))}
+                    </ul>
+                  </details>
+                )}
+
+                <div className="mt-6">
+                  <LinkOut href={o.allPrs}>All pull requests on GitHub</LinkOut>
+                </div>
+              </div>
+            )}
           </section>
         ))}
       </div>
 
-      <p className="mt-20 border-t border-line pt-5 text-[11px] text-dim">
-        Pull request counts and listings sync directly from the GitHub API. Last updated {new Date(d.syncedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.
-      </p>
     </Pane>
   )
 }
@@ -922,14 +1026,28 @@ export function ReadmePane() {
 
 /* ================================================================ router */
 
-export function EditorPane({ id, onOpen }: { id: FileId; onOpen: (id: FileId) => void }) {
+export function EditorPane({ id, onOpen }: { id: TabId; onOpen: (id: TabId) => void }) {
+  // Diffs get a wider column than the reading panes and no line-number gutter,
+  // since the diff carries its own numbering.
+  if (isDiffId(id)) {
+    return (
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <div className="anim-fade relative flex-1 overflow-y-auto bg-bg scroll-thin">
+          <div className="mx-auto w-full max-w-[1100px]">
+            <DiffPane id={id} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   switch (id) {
     case 'home': return <HomePane onOpen={onOpen} />
     case 'about': return <AboutPane />
     case 'projects': return <ProjectsPane />
     case 'skills': return <SkillsPane />
     case 'experience': return <ExperiencePane />
-    case 'opensource': return <OpenSourcePane />
+    case 'opensource': return <OpenSourcePane onOpen={onOpen} />
     case 'publications': return <PublicationsPane />
     case 'contact': return <ContactPane />
     case 'readme': return <ReadmePane />
